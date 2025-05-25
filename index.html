@@ -36,9 +36,14 @@
         
         .budget-summary {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
             gap: 15px;
             margin-bottom: 25px;
+        }
+        
+        .summary-card.remaining {
+            grid-column: 1 / -1;
         }
         
         .summary-card {
@@ -76,7 +81,7 @@
         
         .day-row {
             display: grid;
-            grid-template-columns: 80px 1fr 100px 80px;
+            grid-template-columns: 60px 1fr 100px 80px;
             gap: 10px;
             align-items: center;
             padding: 12px;
@@ -341,43 +346,43 @@
         
         <div class="daily-tracker">
             <div class="day-row">
-                <div class="day-name">Monday</div>
+                <div class="day-name">Mon</div>
                 <input type="text" id="mon-desc" placeholder="What did you spend on?">
                 <input type="number" id="mon-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="mon-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Tuesday</div>
+                <div class="day-name">Tue</div>
                 <input type="text" id="tue-desc" placeholder="What did you spend on?">
                 <input type="number" id="tue-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="tue-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Wednesday</div>
+                <div class="day-name">Wed</div>
                 <input type="text" id="wed-desc" placeholder="What did you spend on?">
                 <input type="number" id="wed-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="wed-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Thursday</div>
+                <div class="day-name">Thu</div>
                 <input type="text" id="thu-desc" placeholder="What did you spend on?">
                 <input type="number" id="thu-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="thu-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Friday</div>
+                <div class="day-name">Fri</div>
                 <input type="text" id="fri-desc" placeholder="What did you spend on?">
                 <input type="number" id="fri-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="fri-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Saturday</div>
+                <div class="day-name">Sat</div>
                 <input type="text" id="sat-desc" placeholder="What did you spend on?">
                 <input type="number" id="sat-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="sat-total">£0.00</div>
             </div>
             <div class="day-row">
-                <div class="day-name">Sunday</div>
+                <div class="day-name">Sun</div>
                 <input type="text" id="sun-desc" placeholder="What did you spend on?">
                 <input type="number" id="sun-amount" placeholder="0.00" step="0.01" min="0">
                 <div class="day-total" id="sun-total">£0.00</div>
