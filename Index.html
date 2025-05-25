@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Budget Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .week-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        .budget-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .summary-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+        
+        .summary-card.spent {
+            border-left-color: #e74c3c;
+        }
+        
+        .summary-card.remaining {
+            border-left-color: #27ae60;
+        }
+        
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .summary-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        
+        .daily-tracker {
+            margin-bottom: 25px;
+        }
+        
+        .day-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 100px 80px;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .day-row:last-child {
+            border-bottom: none;
+        }
+        
+        .day-name {
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        input[type="number"] {
+            padding: 8px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: right;
+        }
+        
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .day-total {
+            font-weight: bold;
+            color: #e74c3c;
+            text-align: right;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-reset {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .btn-save {
+            background-color: #27ae60;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background-color: #229954;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        .weekly-notes {
+            margin-top: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .history-section {
+            margin-top: 30px;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 25px;
+        }
+        
+        .history-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .history-toggle:hover {
+            background: #2980b9;
+        }
+        
+        .history-content {
+            display: none;
+        }
+        
+        .history-content.visible {
+            display: block;
+        }
+        
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .history-week {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .history-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .history-stat {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .history-stat-value {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        
+        .history-stat-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        
+        .history-details {
+            font-size: 14px;
+            color: #5a6c7d;
+        }
+        
+        .history-notes {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-style: italic;
+            color: #5a6c7d;
+        }
+        
+        .export-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .btn-export {
+            background-color: #8e44ad;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .btn-export:hover {
+            background-color: #7d3c98;
+        }
+        
+        .btn-clear {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weekly Budget Tracker</h1>
+        
+        <div class="week-info">
+            <strong>Week Starting: <span id="weekStart"></span></strong>
+        </div>
+        
+        <div class="budget-summary">
+            <div class="summary-card">
+                <div class="summary-value">£350</div>
+                <div class="summary-label">Weekly Budget</div>
+            </div>
+            <div class="summary-card spent">
+                <div class="summary-value" id="totalSpent">£0</div>
+                <div class="summary-label">Spent So Far</div>
+            </div>
+            <div class="summary-card remaining">
+                <div class="summary-value" id="remaining">£350</div>
+                <div class="summary-label">Remaining</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        
+        <div class="daily-tracker">
+            <div class="day-row">
+                <div class="day-name">Monday</div>
+                <input type="text" id="mon-desc" placeholder="What did you spend on?">
+                <input type="number" id="mon-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="mon-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Tuesday</div>
+                <input type="text" id="tue-desc" placeholder="What did you spend on?">
+                <input type="number" id="tue-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="tue-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Wednesday</div>
+                <input type="text" id="wed-desc" placeholder="What did you spend on?">
+                <input type="number" id="wed-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="wed-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Thursday</div>
+                <input type="text" id="thu-desc" placeholder="What did you spend on?">
+                <input type="number" id="thu-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="thu-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Friday</div>
+                <input type="text" id="fri-desc" placeholder="What did you spend on?">
+                <input type="number" id="fri-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="fri-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Saturday</div>
+                <input type="text" id="sat-desc" placeholder="What did you spend on?">
+                <input type="number" id="sat-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="sat-total">£0.00</div>
+            </div>
+            <div class="day-row">
+                <div class="day-name">Sunday</div>
+                <input type="text" id="sun-desc" placeholder="What did you spend on?">
+                <input type="number" id="sun-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-total" id="sun-total">£0.00</div>
+            </div>
+        </div>
+        
+        <div class="weekly-notes">
+            <label for="notes"><strong>Weekly Notes:</strong></label>
+            <textarea id="notes" placeholder="Any observations about your spending this week? What worked well? What to improve next week?"></textarea>
+        </div>
+        
+        <div class="actions">
+            <button class="btn-reset" onclick="resetWeek()">New Week</button>
+            <button class="btn-save" onclick="saveWeek()">Save Week</button>
+        </div>
+        
+        <div class="history-section">
+            <button class="history-toggle" onclick="toggleHistory()">📊 View History</button>
+            
+            <div class="history-content" id="historyContent">
+                <div class="export-section">
+                    <button class="btn-export" onclick="exportToCSV()">📁 Export CSV</button>
+                    <button class="btn-export btn-clear" onclick="clearHistory()">🗑️ Clear History</button>
+                </div>
+                <div id="historyList">
+                    <!-- History items will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WEEKLY_BUDGET = 350;
+        const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        
+        // Load data from browser storage
+        function loadData() {
+            const saved = localStorage.getItem('budgetTrackerData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                // Load current week if it exists
+                if (data.currentWeek) {
+                    loadWeekData(data.currentWeek);
+                }
+                // Load history
+                loadHistory();
+            }
+        }
+        
+        // Save data to browser storage
+        function saveData() {
+            const currentWeekData = getCurrentWeekData();
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            existingData.currentWeek = currentWeekData;
+            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+        }
+        
+        // Get current week data
+        function getCurrentWeekData() {
+            const weekData = {
+                weekStart: document.getElementById('weekStart').textContent,
+                expenses: {},
+                notes: document.getElementById('notes').value,
+                totalSpent: parseFloat(document.getElementById('totalSpent').textContent.replace('£', '')) || 0,
+                remaining: parseFloat(document.getElementById('remaining').textContent.replace('£', '')) || 0,
+                timestamp: new Date().toISOString()
+            };
+            
+            days.forEach(day => {
+                weekData.expenses[day] = {
+                    description: document.getElementById(`${day}-desc`).value,
+                    amount: parseFloat(document.getElementById(`${day}-amount`).value) || 0
+                };
+            });
+            
+            return weekData;
+        }
+        
+        // Load week data into form
+        function loadWeekData(weekData) {
+            document.getElementById('weekStart').textContent = weekData.weekStart;
+            document.getElementById('notes').value = weekData.notes || '';
+            
+            days.forEach(day => {
+                if (weekData.expenses[day]) {
+                    document.getElementById(`${day}-desc`).value = weekData.expenses[day].description || '';
+                    document.getElementById(`${day}-amount`).value = weekData.expenses[day].amount || '';
+                }
+            });
+            
+            updateTotals();
+        }
+        
+        // Set current week start date
+        function setWeekStart() {
+            const today = new Date();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - today.getDay() + 1);
+            document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
+        }
+        
+        // Update totals and progress
+        function updateTotals() {
+            let totalSpent = 0;
+            
+            days.forEach(day => {
+                const amount = parseFloat(document.getElementById(`${day}-amount`).value) || 0;
+                document.getElementById(`${day}-total`).textContent = `£${amount.toFixed(2)}`;
+                totalSpent += amount;
+            });
+            
+            const remaining = WEEKLY_BUDGET - totalSpent;
+            const progressPercent = (totalSpent / WEEKLY_BUDGET) * 100;
+            
+            document.getElementById('totalSpent').textContent = `£${totalSpent.toFixed(2)}`;
+            document.getElementById('remaining').textContent = `£${remaining.toFixed(2)}`;
+            document.getElementById('progressFill').style.width = `${Math.min(progressPercent, 100)}%`;
+            
+            // Change remaining color based on amount
+            const remainingCard = document.getElementById('remaining').parentElement;
+            if (remaining < 0) {
+                remainingCard.style.borderLeftColor = '#e74c3c';
+                document.getElementById('remaining').style.color = '#e74c3c';
+            } else if (remaining < 50) {
+                remainingCard.style.borderLeftColor = '#f39c12';
+                document.getElementById('remaining').style.color = '#f39c12';
+            } else {
+                remainingCard.style.borderLeftColor = '#27ae60';
+                document.getElementById('remaining').style.color = '#27ae60';
+            }
+            
+            // Auto-save current data
+            saveData();
+        }
+        
+        // Add event listeners to all inputs for auto-save
+        function addEventListeners() {
+            days.forEach(day => {
+                document.getElementById(`${day}-amount`).addEventListener('input', updateTotals);
+                document.getElementById(`${day}-desc`).addEventListener('input', saveData);
+            });
+            document.getElementById('notes').addEventListener('input', saveData);
+        }
+        
+        // Reset for new week
+        function resetWeek() {
+            if (confirm('Are you sure you want to start a new week? Current data will be saved to history.')) {
+                // Save current week to history before resetting
+                saveCurrentWeekToHistory();
+                
+                // Clear current week
+                days.forEach(day => {
+                    document.getElementById(`${day}-desc`).value = '';
+                    document.getElementById(`${day}-amount`).value = '';
+                });
+                document.getElementById('notes').value = '';
+                setWeekStart();
+                updateTotals();
+                
+                alert('New week started! Previous week saved to history.');
+            }
+        }
+        
+        // Save current week to history
+        function saveCurrentWeekToHistory() {
+            const weekData = getCurrentWeekData();
+            
+            // Don't save empty weeks
+            if (weekData.totalSpent === 0 && !weekData.notes.trim()) {
+                return;
+            }
+            
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            
+            // Check if this week already exists in history
+            const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
+            
+            if (existingIndex >= 0) {
+                // Update existing week
+                existingData.history[existingIndex] = weekData;
+            } else {
+                // Add new week to history
+                existingData.history.unshift(weekData); // Add to beginning
+            }
+            
+            // Keep only last 26 weeks (6 months)
+            if (existingData.history.length > 26) {
+                existingData.history = existingData.history.slice(0, 26);
+            }
+            
+            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+            loadHistory();
+        }
+        
+        // Save current week
+        function saveWeek() {
+            saveCurrentWeekToHistory();
+            alert('Week saved to history! 📊');
+        }
+        
+        // Toggle history visibility
+        function toggleHistory() {
+            const content = document.getElementById('historyContent');
+            const button = document.querySelector('.history-toggle');
+            
+            if (content.classList.contains('visible')) {
+                content.classList.remove('visible');
+                button.textContent = '📊 View History';
+            } else {
+                content.classList.add('visible');
+                button.textContent = '📊 Hide History';
+                loadHistory();
+            }
+        }
+        
+        // Load and display history
+        function loadHistory() {
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            const historyList = document.getElementById('historyList');
+            
+            if (existingData.history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
+                return;
+            }
+            
+            historyList.innerHTML = existingData.history.map((week, index) => {
+                const expenseDetails = days.map(day => {
+                    const expense = week.expenses[day];
+                    if (expense && expense.amount > 0) {
+                        return `${dayNames[days.indexOf(day)]}: ${expense.description} (£${expense.amount.toFixed(2)})`;
+                    }
+                    return null;
+                }).filter(Boolean).join(', ');
+                
+                const overBudget = week.totalSpent > WEEKLY_BUDGET;
+                const borderColor = overBudget ? '#e74c3c' : '#27ae60';
+                
+                return `
+                    <div class="history-item" style="border-left-color: ${borderColor}">
+                        <div class="history-header">
+                            <div class="history-week">Week of ${week.weekStart}</div>
+                            <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
+                        </div>
+                        <div class="history-summary">
+                            <div class="history-stat">
+                                <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
+                                <div class="history-stat-label">Spent</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
+                                <div class="history-stat-label">Remaining</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
+                                <div class="history-stat-label">Used</div>
+                            </div>
+                        </div>
+                        ${expenseDetails ? `<div class="history-details">${expenseDetails}</div>` : ''}
+                        ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            
+            if (existingData.history.length === 0) {
+                alert('No history to export!');
+                return;
+            }
+            
+            let csv = 'Week Starting,Total Spent,Remaining,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
+            
+            existingData.history.forEach(week => {
+                const row = [
+                    week.weekStart,
+                    week.totalSpent.toFixed(2),
+                    week.remaining.toFixed(2),
+                    ...days.map(day => week.expenses[day] ? week.expenses[day].amount.toFixed(2) : '0.00'),
+                    `"${week.notes || ''}"`
+                ];
+                csv += row.join(',') + '\n';
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `budget-history-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Clear history
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history? This cannot be undone!')) {
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{}');
+                existingData.history = [];
+                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+                loadHistory();
+                alert('History cleared!');
+            }
+        }
+        
+        // Initialize
+        function init() {
+            setWeekStart();
+            addEventListeners();
+            loadData();
+            updateTotals();
+        }
+        
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
