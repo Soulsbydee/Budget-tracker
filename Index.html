@@ -416,24 +416,34 @@
         
         // Load data from browser storage
         function loadData() {
-            const saved = localStorage.getItem('budgetTrackerData');
-            if (saved) {
-                const data = JSON.parse(saved);
-                // Load current week if it exists
-                if (data.currentWeek) {
-                    loadWeekData(data.currentWeek);
+            try {
+                const saved = localStorage.getItem('budgetTrackerData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    // Load current week if it exists
+                    if (data.currentWeek) {
+                        loadWeekData(data.currentWeek);
+                    }
+                    // Load history
+                    loadHistory();
                 }
-                // Load history
-                loadHistory();
+            } catch (error) {
+                console.log('Error loading data:', error);
+                // Continue without saved data
             }
         }
         
         // Save data to browser storage
         function saveData() {
-            const currentWeekData = getCurrentWeekData();
-            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-            existingData.currentWeek = currentWeekData;
-            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+            try {
+                const currentWeekData = getCurrentWeekData();
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                existingData.currentWeek = currentWeekData;
+                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+            } catch (error) {
+                console.log('Error saving data:', error);
+                // Continue without saving - app still works
+            }
         }
         
         // Get current week data
@@ -544,33 +554,38 @@
         
         // Save current week to history
         function saveCurrentWeekToHistory() {
-            const weekData = getCurrentWeekData();
-            
-            // Don't save empty weeks
-            if (weekData.totalSpent === 0 && !weekData.notes.trim()) {
-                return;
+            try {
+                const weekData = getCurrentWeekData();
+                
+                // Don't save empty weeks
+                if (weekData.totalSpent === 0 && !weekData.notes.trim()) {
+                    return;
+                }
+                
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                
+                // Check if this week already exists in history
+                const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
+                
+                if (existingIndex >= 0) {
+                    // Update existing week
+                    existingData.history[existingIndex] = weekData;
+                } else {
+                    // Add new week to history
+                    existingData.history.unshift(weekData); // Add to beginning
+                }
+                
+                // Keep only last 26 weeks (6 months)
+                if (existingData.history.length > 26) {
+                    existingData.history = existingData.history.slice(0, 26);
+                }
+                
+                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+                loadHistory();
+            } catch (error) {
+                console.log('Error saving to history:', error);
+                alert('Data saved locally but history may not persist. App still works normally!');
             }
-            
-            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-            
-            // Check if this week already exists in history
-            const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
-            
-            if (existingIndex >= 0) {
-                // Update existing week
-                existingData.history[existingIndex] = weekData;
-            } else {
-                // Add new week to history
-                existingData.history.unshift(weekData); // Add to beginning
-            }
-            
-            // Keep only last 26 weeks (6 months)
-            if (existingData.history.length > 26) {
-                existingData.history = existingData.history.slice(0, 26);
-            }
-            
-            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-            loadHistory();
         }
         
         // Save current week
@@ -596,51 +611,64 @@
         
         // Load and display history
         function loadHistory() {
-            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-            const historyList = document.getElementById('historyList');
-            
-            if (existingData.history.length === 0) {
-                historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
-                return;
+            try {
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                const historyList = document.getElementById('historyList');
+                
+                if (!historyList) {
+                    console.log('History list element not found');
+                    return;
+                }
+                
+                if (existingData.history.length === 0) {
+                    historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
+                    return;
+                }
+                
+                historyList.innerHTML = existingData.history.map((week, index) => {
+                    const expenseDetails = days.map(day => {
+                        const expense = week.expenses[day];
+                        if (expense && expense.amount > 0) {
+                            return `${dayNames[days.indexOf(day)]}: ${expense.description} (£${expense.amount.toFixed(2)})`;
+                        }
+                        return null;
+                    }).filter(Boolean).join(', ');
+                    
+                    const overBudget = week.totalSpent > WEEKLY_BUDGET;
+                    const borderColor = overBudget ? '#e74c3c' : '#27ae60';
+                    
+                    return `
+                        <div class="history-item" style="border-left-color: ${borderColor}">
+                            <div class="history-header">
+                                <div class="history-week">Week of ${week.weekStart}</div>
+                                <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
+                            </div>
+                            <div class="history-summary">
+                                <div class="history-stat">
+                                    <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
+                                    <div class="history-stat-label">Spent</div>
+                                </div>
+                                <div class="history-stat">
+                                    <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
+                                    <div class="history-stat-label">Remaining</div>
+                                </div>
+                                <div class="history-stat">
+                                    <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
+                                    <div class="history-stat-label">Used</div>
+                                </div>
+                            </div>
+                            ${expenseDetails ? `<div class="history-details">${expenseDetails}</div>` : ''}
+                            ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.log('Error loading history:', error);
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = '<p style="text-align: center; color: #e74c3c;">Unable to load history. The tracker still works for current week!</p>';
+                }
             }
-            
-            historyList.innerHTML = existingData.history.map((week, index) => {
-                const expenseDetails = days.map(day => {
-                    const expense = week.expenses[day];
-                    if (expense && expense.amount > 0) {
-                        return `${dayNames[days.indexOf(day)]}: ${expense.description} (£${expense.amount.toFixed(2)})`;
-                    }
-                    return null;
-                }).filter(Boolean).join(', ');
-                
-                const overBudget = week.totalSpent > WEEKLY_BUDGET;
-                const borderColor = overBudget ? '#e74c3c' : '#27ae60';
-                
-                return `
-                    <div class="history-item" style="border-left-color: ${borderColor}">
-                        <div class="history-header">
-                            <div class="history-week">Week of ${week.weekStart}</div>
-                            <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
-                        </div>
-                        <div class="history-summary">
-                            <div class="history-stat">
-                                <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
-                                <div class="history-stat-label">Spent</div>
-                            </div>
-                            <div class="history-stat">
-                                <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
-                                <div class="history-stat-label">Remaining</div>
-                            </div>
-                            <div class="history-stat">
-                                <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
-                                <div class="history-stat-label">Used</div>
-                            </div>
-                        </div>
-                        ${expenseDetails ? `<div class="history-details">${expenseDetails}</div>` : ''}
-                        ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
-                    </div>
-                `;
-            }).join('');
         }
         
         // Export to CSV
@@ -688,14 +716,27 @@
         
         // Initialize
         function init() {
-            setWeekStart();
-            addEventListeners();
-            loadData();
-            updateTotals();
+            try {
+                setWeekStart();
+                addEventListeners();
+                loadData();
+                updateTotals();
+            } catch (error) {
+                console.log('Initialization error:', error);
+                // Still set up basic functionality
+                setWeekStart();
+                updateTotals();
+                alert('App loaded with basic functionality. Some features may not work on this browser.');
+            }
         }
         
-        // Start the app
-        init();
+        // Start the app when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            // Page already loaded
+            init();
+        }
     </script>
 </body>
 </html>
