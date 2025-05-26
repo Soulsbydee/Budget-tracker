@@ -42,10 +42,6 @@
             margin-bottom: 25px;
         }
         
-        .summary-card.remaining {
-            grid-column: 1 / -1;
-        }
-        
         .summary-card {
             background: #f8f9fa;
             padding: 15px;
@@ -60,6 +56,7 @@
         
         .summary-card.remaining {
             border-left-color: #27ae60;
+            grid-column: 1 / -1;
         }
         
         .summary-value {
@@ -81,15 +78,19 @@
         
         .day-row {
             display: grid;
-            grid-template-columns: 60px 1fr 100px 80px;
-            gap: 10px;
+            grid-template-columns: 60px 1fr 80px;
+            gap: 15px;
             align-items: center;
-            padding: 12px;
+            padding: 15px;
             border-bottom: 1px solid #ecf0f1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 6px;
+            margin-bottom: 5px;
         }
         
-        .day-row:last-child {
-            border-bottom: none;
+        .day-row:hover {
+            background-color: #f8f9fa;
         }
         
         .day-name {
@@ -97,37 +98,185 @@
             color: #34495e;
         }
         
-        input[type="text"] {
-            padding: 8px 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        input[type="number"] {
-            padding: 8px 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            width: 100%;
-            box-sizing: border-box;
-            text-align: right;
-        }
-        
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #3498db;
+        .day-summary {
+            font-size: 14px;
+            color: #7f8c8d;
         }
         
         .day-total {
             font-weight: bold;
             color: #e74c3c;
             text-align: right;
+            font-size: 18px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 20px 25px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .modal-body {
+            padding: 20px 25px;
+        }
+        
+        .day-total-modal {
+            text-align: center;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .day-total-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .day-total-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        
+        .add-item-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input {
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn-add {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            height: 42px;
+        }
+        
+        .btn-add:hover {
+            background-color: #2980b9;
+        }
+        
+        .items-list {
+            margin-bottom: 20px;
+        }
+        
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .item-desc {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .item-amount {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 10px;
+        }
+        
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+            width: 24px;
+            height: 24px;
         }
         
         .actions {
@@ -164,22 +313,6 @@
             background-color: #229954;
         }
         
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background-color: #ecf0f1;
-            border-radius: 10px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
-            transition: width 0.3s ease;
-            border-radius: 10px;
-        }
-        
         .weekly-notes {
             margin-top: 25px;
         }
@@ -199,121 +332,16 @@
             border-color: #3498db;
         }
         
-        .history-section {
-            margin-top: 30px;
-            border-top: 2px solid #ecf0f1;
-            padding-top: 25px;
-        }
-        
-        .history-toggle {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        
-        .history-toggle:hover {
-            background: #2980b9;
-        }
-        
-        .history-content {
-            display: none;
-        }
-        
-        .history-content.visible {
-            display: block;
-        }
-        
-        .history-item {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .history-week {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .history-summary {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .history-stat {
-            text-align: center;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-        }
-        
-        .history-stat-value {
-            font-weight: bold;
-            font-size: 18px;
-            color: #2c3e50;
-        }
-        
-        .history-stat-label {
-            font-size: 11px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-        
-        .history-details {
-            font-size: 14px;
-            color: #5a6c7d;
-        }
-        
-        .history-notes {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-style: italic;
-            color: #5a6c7d;
-        }
-        
-        .export-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .btn-export {
-            background-color: #8e44ad;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-        
-        .btn-export:hover {
-            background-color: #7d3c98;
-        }
-        
-        .btn-clear {
-            background-color: #e74c3c;
-            color: white;
-        }
-        
-        .btn-clear:hover {
-            background-color: #c0392b;
+        @media (max-width: 480px) {
+            .add-item-form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .btn-add {
+                justify-self: center;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -345,46 +373,39 @@
         </div>
         
         <div class="daily-tracker">
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('mon', 'Monday')">
                 <div class="day-name">Mon</div>
-                <input type="text" id="mon-desc" placeholder="What did you spend on?">
-                <input type="number" id="mon-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="mon-summary">Tap to add expenses</div>
                 <div class="day-total" id="mon-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('tue', 'Tuesday')">
                 <div class="day-name">Tue</div>
-                <input type="text" id="tue-desc" placeholder="What did you spend on?">
-                <input type="number" id="tue-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="tue-summary">Tap to add expenses</div>
                 <div class="day-total" id="tue-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('wed', 'Wednesday')">
                 <div class="day-name">Wed</div>
-                <input type="text" id="wed-desc" placeholder="What did you spend on?">
-                <input type="number" id="wed-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="wed-summary">Tap to add expenses</div>
                 <div class="day-total" id="wed-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('thu', 'Thursday')">
                 <div class="day-name">Thu</div>
-                <input type="text" id="thu-desc" placeholder="What did you spend on?">
-                <input type="number" id="thu-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="thu-summary">Tap to add expenses</div>
                 <div class="day-total" id="thu-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('fri', 'Friday')">
                 <div class="day-name">Fri</div>
-                <input type="text" id="fri-desc" placeholder="What did you spend on?">
-                <input type="number" id="fri-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="fri-summary">Tap to add expenses</div>
                 <div class="day-total" id="fri-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('sat', 'Saturday')">
                 <div class="day-name">Sat</div>
-                <input type="text" id="sat-desc" placeholder="What did you spend on?">
-                <input type="number" id="sat-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="sat-summary">Tap to add expenses</div>
                 <div class="day-total" id="sat-total">£0.00</div>
             </div>
-            <div class="day-row">
+            <div class="day-row" onclick="openDayModal('sun', 'Sunday')">
                 <div class="day-name">Sun</div>
-                <input type="text" id="sun-desc" placeholder="What did you spend on?">
-                <input type="number" id="sun-amount" placeholder="0.00" step="0.01" min="0">
+                <div class="day-summary" id="sun-summary">Tap to add expenses</div>
                 <div class="day-total" id="sun-total">£0.00</div>
             </div>
         </div>
@@ -398,17 +419,35 @@
             <button class="btn-reset" onclick="resetWeek()">New Week</button>
             <button class="btn-save" onclick="saveWeek()">Save Week</button>
         </div>
-        
-        <div class="history-section">
-            <button class="history-toggle" onclick="toggleHistory()">📊 View History</button>
-            
-            <div class="history-content" id="historyContent">
-                <div class="export-section">
-                    <button class="btn-export" onclick="exportToCSV()">📁 Export CSV</button>
-                    <button class="btn-export btn-clear" onclick="clearHistory()">🗑️ Clear History</button>
+    </div>
+
+    <!-- Daily Detail Modal -->
+    <div id="dayModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Monday</div>
+                <span class="close" onclick="closeDayModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="day-total-modal">
+                    <div class="day-total-value" id="modalDayTotal">£0.00</div>
+                    <div class="day-total-label">Total for Day</div>
                 </div>
-                <div id="historyList">
-                    <!-- History items will be inserted here -->
+                
+                <div class="add-item-form">
+                    <div class="form-group">
+                        <label for="itemDesc">What did you buy?</label>
+                        <input type="text" id="itemDesc" placeholder="Coffee, lunch, petrol...">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemAmount">Amount</label>
+                        <input type="number" id="itemAmount" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <button class="btn-add" onclick="addItem()">Add</button>
+                </div>
+                
+                <div class="items-list" id="itemsList">
+                    <!-- Items will be added here -->
                 </div>
             </div>
         </div>
@@ -417,7 +456,10 @@
     <script>
         const WEEKLY_BUDGET = 308;
         const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        let currentDay = '';
+        let dailyExpenses = {
+            mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+        };
         
         // Load data from browser storage
         function loadData() {
@@ -425,66 +467,33 @@
                 const saved = localStorage.getItem('budgetTrackerData');
                 if (saved) {
                     const data = JSON.parse(saved);
-                    // Load current week if it exists
-                    if (data.currentWeek) {
-                        loadWeekData(data.currentWeek);
+                    if (data.currentWeek && data.currentWeek.dailyExpenses) {
+                        dailyExpenses = data.currentWeek.dailyExpenses;
+                        document.getElementById('notes').value = data.currentWeek.notes || '';
+                        updateAllDays();
                     }
-                    // Load history
-                    loadHistory();
                 }
             } catch (error) {
                 console.log('Error loading data:', error);
-                // Continue without saved data
             }
         }
         
         // Save data to browser storage
         function saveData() {
             try {
-                const currentWeekData = getCurrentWeekData();
+                const currentWeekData = {
+                    weekStart: document.getElementById('weekStart').textContent,
+                    dailyExpenses: dailyExpenses,
+                    notes: document.getElementById('notes').value,
+                    timestamp: new Date().toISOString()
+                };
+                
                 const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
                 existingData.currentWeek = currentWeekData;
                 localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
             } catch (error) {
                 console.log('Error saving data:', error);
-                // Continue without saving - app still works
             }
-        }
-        
-        // Get current week data
-        function getCurrentWeekData() {
-            const weekData = {
-                weekStart: document.getElementById('weekStart').textContent,
-                expenses: {},
-                notes: document.getElementById('notes').value,
-                totalSpent: parseFloat(document.getElementById('totalSpent').textContent.replace('£', '')) || 0,
-                remaining: parseFloat(document.getElementById('remaining').textContent.replace('£', '')) || 0,
-                timestamp: new Date().toISOString()
-            };
-            
-            days.forEach(day => {
-                weekData.expenses[day] = {
-                    description: document.getElementById(`${day}-desc`).value,
-                    amount: parseFloat(document.getElementById(`${day}-amount`).value) || 0
-                };
-            });
-            
-            return weekData;
-        }
-        
-        // Load week data into form
-        function loadWeekData(weekData) {
-            document.getElementById('weekStart').textContent = weekData.weekStart;
-            document.getElementById('notes').value = weekData.notes || '';
-            
-            days.forEach(day => {
-                if (weekData.expenses[day]) {
-                    document.getElementById(`${day}-desc`).value = weekData.expenses[day].description || '';
-                    document.getElementById(`${day}-amount`).value = weekData.expenses[day].amount || '';
-                }
-            });
-            
-            updateTotals();
         }
         
         // Set current week start date
@@ -495,14 +504,36 @@
             document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
         }
         
-        // Update totals and progress
-        function updateTotals() {
-            let totalSpent = 0;
+        // Update day summary and total
+        function updateDay(day) {
+            const expenses = dailyExpenses[day];
+            const total = expenses.reduce((sum, item) => sum + item.amount, 0);
             
+            document.getElementById(`${day}-total`).textContent = `£${total.toFixed(2)}`;
+            
+            const summaryEl = document.getElementById(`${day}-summary`);
+            if (expenses.length === 0) {
+                summaryEl.textContent = 'Tap to add expenses';
+                summaryEl.style.color = '#7f8c8d';
+            } else {
+                const itemCount = expenses.length;
+                const preview = expenses.slice(0, 2).map(item => item.description).join(', ');
+                summaryEl.textContent = itemCount === 1 ? preview : `${preview}${itemCount > 2 ? '...' : ''}`;
+                summaryEl.style.color = '#5a6c7d';
+            }
+        }
+        
+        // Update all days and totals
+        function updateAllDays() {
+            days.forEach(updateDay);
+            updateWeeklyTotals();
+        }
+        
+        // Update weekly totals
+        function updateWeeklyTotals() {
+            let totalSpent = 0;
             days.forEach(day => {
-                const amount = parseFloat(document.getElementById(`${day}-amount`).value) || 0;
-                document.getElementById(`${day}-total`).textContent = `£${amount.toFixed(2)}`;
-                totalSpent += amount;
+                totalSpent += dailyExpenses[day].reduce((sum, item) => sum + item.amount, 0);
             });
             
             const remaining = WEEKLY_BUDGET - totalSpent;
@@ -525,213 +556,129 @@
                 document.getElementById('remaining').style.color = '#27ae60';
             }
             
-            // Auto-save current data
             saveData();
         }
         
-        // Add event listeners to all inputs for auto-save
-        function addEventListeners() {
-            days.forEach(day => {
-                document.getElementById(`${day}-amount`).addEventListener('input', updateTotals);
-                document.getElementById(`${day}-desc`).addEventListener('input', saveData);
+        // Open day modal
+        function openDayModal(day, dayName) {
+            currentDay = day;
+            document.getElementById('modalTitle').textContent = dayName;
+            document.getElementById('dayModal').style.display = 'block';
+            updateModalContent();
+        }
+        
+        // Close day modal
+        function closeDayModal() {
+            document.getElementById('dayModal').style.display = 'none';
+            document.getElementById('itemDesc').value = '';
+            document.getElementById('itemAmount').value = '';
+        }
+        
+        // Update modal content
+        function updateModalContent() {
+            const expenses = dailyExpenses[currentDay];
+            const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+            
+            document.getElementById('modalDayTotal').textContent = `£${total.toFixed(2)}`;
+            
+            const itemsList = document.getElementById('itemsList');
+            if (expenses.length === 0) {
+                itemsList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No expenses yet. Add your first item above!</p>';
+            } else {
+                itemsList.innerHTML = expenses.map((item, index) => `
+                    <div class="item-row">
+                        <div class="item-desc">${item.description}</div>
+                        <div class="item-amount">£${item.amount.toFixed(2)}</div>
+                        <button class="btn-delete" onclick="deleteItem(${index})" title="Delete">×</button>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        // Add item to current day
+        function addItem() {
+            const description = document.getElementById('itemDesc').value.trim();
+            const amount = parseFloat(document.getElementById('itemAmount').value);
+            
+            if (!description || !amount || amount <= 0) {
+                alert('Please enter both description and amount');
+                return;
+            }
+            
+            dailyExpenses[currentDay].push({
+                description: description,
+                amount: amount,
+                timestamp: new Date().toISOString()
             });
-            document.getElementById('notes').addEventListener('input', saveData);
+            
+            document.getElementById('itemDesc').value = '';
+            document.getElementById('itemAmount').value = '';
+            
+            updateModalContent();
+            updateDay(currentDay);
+            updateWeeklyTotals();
+        }
+        
+        // Delete item from current day
+        function deleteItem(index) {
+            if (confirm('Delete this expense?')) {
+                dailyExpenses[currentDay].splice(index, 1);
+                updateModalContent();
+                updateDay(currentDay);
+                updateWeeklyTotals();
+            }
+        }
+        
+        // Handle enter key in modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && document.getElementById('dayModal').style.display === 'block') {
+                if (document.getElementById('itemDesc') === document.activeElement || 
+                    document.getElementById('itemAmount') === document.activeElement) {
+                    addItem();
+                }
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('dayModal');
+            if (event.target === modal) {
+                closeDayModal();
+            }
         }
         
         // Reset for new week
         function resetWeek() {
-            if (confirm('Are you sure you want to start a new week? Current data will be saved to history.')) {
-                // Save current week to history before resetting
-                saveCurrentWeekToHistory();
-                
-                // Clear current week
-                days.forEach(day => {
-                    document.getElementById(`${day}-desc`).value = '';
-                    document.getElementById(`${day}-amount`).value = '';
-                });
+            if (confirm('Are you sure you want to start a new week?')) {
+                dailyExpenses = {
+                    mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+                };
                 document.getElementById('notes').value = '';
                 setWeekStart();
-                updateTotals();
-                
-                alert('New week started! Previous week saved to history.');
-            }
-        }
-        
-        // Save current week to history
-        function saveCurrentWeekToHistory() {
-            try {
-                const weekData = getCurrentWeekData();
-                
-                // Don't save empty weeks
-                if (weekData.totalSpent === 0 && !weekData.notes.trim()) {
-                    return;
-                }
-                
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                
-                // Check if this week already exists in history
-                const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
-                
-                if (existingIndex >= 0) {
-                    // Update existing week
-                    existingData.history[existingIndex] = weekData;
-                } else {
-                    // Add new week to history
-                    existingData.history.unshift(weekData); // Add to beginning
-                }
-                
-                // Keep only last 26 weeks (6 months)
-                if (existingData.history.length > 26) {
-                    existingData.history = existingData.history.slice(0, 26);
-                }
-                
-                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-                loadHistory();
-            } catch (error) {
-                console.log('Error saving to history:', error);
-                alert('Data saved locally but history may not persist. App still works normally!');
+                updateAllDays();
+                alert('New week started!');
             }
         }
         
         // Save current week
         function saveWeek() {
-            saveCurrentWeekToHistory();
-            alert('Week saved to history! 📊');
+            saveData();
+            alert('Week saved! 📊');
         }
         
-        // Toggle history visibility
-        function toggleHistory() {
-            const content = document.getElementById('historyContent');
-            const button = document.querySelector('.history-toggle');
-            
-            if (content.classList.contains('visible')) {
-                content.classList.remove('visible');
-                button.textContent = '📊 View History';
-            } else {
-                content.classList.add('visible');
-                button.textContent = '📊 Hide History';
-                loadHistory();
-            }
-        }
-        
-        // Load and display history
-        function loadHistory() {
-            try {
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                const historyList = document.getElementById('historyList');
-                
-                if (!historyList) {
-                    console.log('History list element not found');
-                    return;
-                }
-                
-                if (existingData.history.length === 0) {
-                    historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
-                    return;
-                }
-                
-                historyList.innerHTML = existingData.history.map((week, index) => {
-                    const expenseDetails = days.map(day => {
-                        const expense = week.expenses[day];
-                        if (expense && expense.amount > 0) {
-                            return `${dayNames[days.indexOf(day)]}: ${expense.description} (£${expense.amount.toFixed(2)})`;
-                        }
-                        return null;
-                    }).filter(Boolean).join(', ');
-                    
-                    const overBudget = week.totalSpent > WEEKLY_BUDGET;
-                    const borderColor = overBudget ? '#e74c3c' : '#27ae60';
-                    
-                    return `
-                        <div class="history-item" style="border-left-color: ${borderColor}">
-                            <div class="history-header">
-                                <div class="history-week">Week of ${week.weekStart}</div>
-                                <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
-                            </div>
-                            <div class="history-summary">
-                                <div class="history-stat">
-                                    <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
-                                    <div class="history-stat-label">Spent</div>
-                                </div>
-                                <div class="history-stat">
-                                    <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
-                                    <div class="history-stat-label">Remaining</div>
-                                </div>
-                                <div class="history-stat">
-                                    <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
-                                    <div class="history-stat-label">Used</div>
-                                </div>
-                            </div>
-                            ${expenseDetails ? `<div class="history-details">${expenseDetails}</div>` : ''}
-                            ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.log('Error loading history:', error);
-                const historyList = document.getElementById('historyList');
-                if (historyList) {
-                    historyList.innerHTML = '<p style="text-align: center; color: #e74c3c;">Unable to load history. The tracker still works for current week!</p>';
-                }
-            }
-        }
-        
-        // Export to CSV
-        function exportToCSV() {
-            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-            
-            if (existingData.history.length === 0) {
-                alert('No history to export!');
-                return;
-            }
-            
-            let csv = 'Week Starting,Total Spent,Remaining,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
-            
-            existingData.history.forEach(week => {
-                const row = [
-                    week.weekStart,
-                    week.totalSpent.toFixed(2),
-                    week.remaining.toFixed(2),
-                    ...days.map(day => week.expenses[day] ? week.expenses[day].amount.toFixed(2) : '0.00'),
-                    `"${week.notes || ''}"`
-                ];
-                csv += row.join(',') + '\n';
-            });
-            
-            // Download CSV
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `budget-history-${new Date().toISOString().split('T')[0]}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        }
-        
-        // Clear history
-        function clearHistory() {
-            if (confirm('Are you sure you want to clear all history? This cannot be undone!')) {
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{}');
-                existingData.history = [];
-                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-                loadHistory();
-                alert('History cleared!');
-            }
-        }
+        // Add event listener for notes
+        document.getElementById('notes').addEventListener('input', saveData);
         
         // Initialize
         function init() {
             try {
                 setWeekStart();
-                addEventListeners();
                 loadData();
-                updateTotals();
+                updateAllDays();
             } catch (error) {
                 console.log('Initialization error:', error);
-                // Still set up basic functionality
                 setWeekStart();
-                updateTotals();
-                alert('App loaded with basic functionality. Some features may not work on this browser.');
+                updateAllDays();
             }
         }
         
@@ -739,7 +686,6 @@
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
-            // Page already loaded
             init();
         }
     </script>
