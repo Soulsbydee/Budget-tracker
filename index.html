@@ -332,6 +332,124 @@
             border-color: #3498db;
         }
         
+        .history-section {
+            margin-top: 30px;
+            border-top: 2px solid #ecf0f1;
+            padding-top: 25px;
+        }
+        
+        .history-toggle {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .history-toggle:hover {
+            background: #2980b9;
+        }
+        
+        .history-content {
+            display: none;
+        }
+        
+        .history-content.visible {
+            display: block;
+        }
+        
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .history-week {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .history-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .history-stat {
+            text-align: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .history-stat-value {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+        
+        .history-stat-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        
+        .history-details {
+            font-size: 14px;
+            color: #5a6c7d;
+            margin-bottom: 10px;
+        }
+        
+        .history-notes {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-style: italic;
+            color: #5a6c7d;
+        }
+        
+        .export-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .btn-export {
+            background-color: #8e44ad;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .btn-export:hover {
+            background-color: #7d3c98;
+        }
+        
+        .btn-clear {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .btn-clear:hover {
+            background-color: #c0392b;
+        }
+        
         @media (max-width: 480px) {
             .add-item-form {
                 grid-template-columns: 1fr;
@@ -418,6 +536,20 @@
         <div class="actions">
             <button class="btn-reset" onclick="resetWeek()">New Week</button>
             <button class="btn-save" onclick="saveWeek()">Save Week</button>
+        </div>
+        
+        <div class="history-section">
+            <button class="history-toggle" onclick="toggleHistory()">📊 View History</button>
+            
+            <div class="history-content" id="historyContent">
+                <div class="export-section">
+                    <button class="btn-export" onclick="exportToCSV()">📁 Export CSV</button>
+                    <button class="btn-export btn-clear" onclick="clearHistory()">🗑️ Clear History</button>
+                </div>
+                <div id="historyList">
+                    <!-- History items will be inserted here -->
+                </div>
+            </div>
         </div>
     </div>
 
@@ -649,21 +781,207 @@
         
         // Reset for new week
         function resetWeek() {
-            if (confirm('Are you sure you want to start a new week?')) {
+            if (confirm('Are you sure you want to start a new week? Current data will be saved to history.')) {
+                saveCurrentWeekToHistory();
+                
                 dailyExpenses = {
                     mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
                 };
                 document.getElementById('notes').value = '';
                 setWeekStart();
                 updateAllDays();
-                alert('New week started!');
+                alert('New week started! Previous week saved to history.');
+            }
+        }
+        
+        // Save current week to history
+        function saveCurrentWeekToHistory() {
+            try {
+                const totalSpent = days.reduce((sum, day) => 
+                    sum + dailyExpenses[day].reduce((daySum, item) => daySum + item.amount, 0), 0);
+                
+                if (totalSpent === 0 && !document.getElementById('notes').value.trim()) {
+                    return;
+                }
+                
+                const weekData = {
+                    weekStart: document.getElementById('weekStart').textContent,
+                    dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)),
+                    notes: document.getElementById('notes').value,
+                    totalSpent: totalSpent,
+                    remaining: WEEKLY_BUDGET - totalSpent,
+                    timestamp: new Date().toISOString()
+                };
+                
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
+                
+                if (existingIndex >= 0) {
+                    existingData.history[existingIndex] = weekData;
+                } else {
+                    existingData.history.unshift(weekData);
+                }
+                
+                if (existingData.history.length > 26) {
+                    existingData.history = existingData.history.slice(0, 26);
+                }
+                
+                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+                loadHistory();
+            } catch (error) {
+                console.log('Error saving to history:', error);
+                alert('Data saved locally but history may not persist. App still works normally!');
             }
         }
         
         // Save current week
         function saveWeek() {
-            saveData();
-            alert('Week saved! 📊');
+            saveCurrentWeekToHistory();
+            alert('Week saved to history! 📊');
+        }
+        
+        // Toggle history visibility
+        function toggleHistory() {
+            const content = document.getElementById('historyContent');
+            const button = document.querySelector('.history-toggle');
+            
+            if (content.classList.contains('visible')) {
+                content.classList.remove('visible');
+                button.textContent = '📊 View History';
+            } else {
+                content.classList.add('visible');
+                button.textContent = '📊 Hide History';
+                loadHistory();
+            }
+        }
+        
+        // Load and display history
+        function loadHistory() {
+            try {
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                const historyList = document.getElementById('historyList');
+                
+                if (!historyList) {
+                    console.log('History list element not found');
+                    return;
+                }
+                
+                if (existingData.history.length === 0) {
+                    historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
+                    return;
+                }
+                
+                historyList.innerHTML = existingData.history.map((week, index) => {
+                    const overBudget = week.totalSpent > WEEKLY_BUDGET;
+                    const borderColor = overBudget ? '#e74c3c' : '#27ae60';
+                    
+                    // Create daily breakdown
+                    const dailyBreakdown = days.map(day => {
+                        const dayExpenses = week.dailyExpenses[day] || [];
+                        const dayTotal = dayExpenses.reduce((sum, item) => sum + item.amount, 0);
+                        if (dayTotal > 0) {
+                            const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+                            const itemsPreview = dayExpenses.slice(0, 3).map(item => 
+                                `${item.description} (£${item.amount.toFixed(2)})`
+                            ).join(', ');
+                            return `${dayName}: £${dayTotal.toFixed(2)} - ${itemsPreview}${dayExpenses.length > 3 ? '...' : ''}`;
+                        }
+                        return null;
+                    }).filter(Boolean).join('<br>');
+                    
+                    return `
+                        <div class="history-item" style="border-left-color: ${borderColor}">
+                            <div class="history-header">
+                                <div class="history-week">Week of ${week.weekStart}</div>
+                                <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
+                            </div>
+                            <div class="history-summary">
+                                <div class="history-stat">
+                                    <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
+                                    <div class="history-stat-label">Spent</div>
+                                </div>
+                                <div class="history-stat">
+                                    <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
+                                    <div class="history-stat-label">Remaining</div>
+                                </div>
+                                <div class="history-stat">
+                                    <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
+                                    <div class="history-stat-label">Used</div>
+                                </div>
+                            </div>
+                            ${dailyBreakdown ? `<div class="history-details">${dailyBreakdown}</div>` : ''}
+                            ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.log('Error loading history:', error);
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = '<p style="text-align: center; color: #e74c3c;">Unable to load history. The tracker still works for current week!</p>';
+                }
+            }
+        }
+        
+        // Export to CSV
+        function exportToCSV() {
+            try {
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+                
+                if (existingData.history.length === 0) {
+                    alert('No history to export!');
+                    return;
+                }
+                
+                let csv = 'Week Starting,Total Spent,Remaining,Budget Used %,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
+                
+                existingData.history.forEach(week => {
+                    const dailyTotals = days.map(day => {
+                        const dayExpenses = week.dailyExpenses[day] || [];
+                        return dayExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
+                    });
+                    
+                    const budgetUsedPercent = ((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(1);
+                    
+                    const row = [
+                        week.weekStart,
+                        week.totalSpent.toFixed(2),
+                        week.remaining.toFixed(2),
+                        budgetUsedPercent + '%',
+                        ...dailyTotals,
+                        `"${(week.notes || '').replace(/"/g, '""')}"`
+                    ];
+                    csv += row.join(',') + '\n';
+                });
+                
+                // Download CSV
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `budget-history-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.log('Error exporting CSV:', error);
+                alert('Error exporting data. Please try again.');
+            }
+        }
+        
+        // Clear history
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all history? This cannot be undone!')) {
+                try {
+                    const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{}');
+                    existingData.history = [];
+                    localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+                    loadHistory();
+                    alert('History cleared!');
+                } catch (error) {
+                    console.log('Error clearing history:', error);
+                    alert('Error clearing history. Please try again.');
+                }
+            }
         }
         
         // Add event listener for notes
