@@ -9,14 +9,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 ```
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
     body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif !important;
         margin: 0;
         padding: 0;
         background: #f2f2f7;
@@ -64,13 +66,14 @@
     }
     
     .budget-overview {
-        display: flex;
+        display: flex !important;
+        flex-direction: row !important;
         gap: 8px;
         margin-bottom: 12px;
     }
     
     .budget-card {
-        flex: 1;
+        flex: 1 !important;
         text-align: center;
         padding: 10px 8px;
         background: #f2f2f7;
@@ -210,7 +213,7 @@
         background: #f2f2f7;
         border-radius: 8px;
         padding: 12px;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
         font-size: 16px;
         color: #000;
         resize: vertical;
@@ -498,7 +501,7 @@
         padding: 12px;
         font-size: 16px;
         color: #000;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     
     .input-field:focus {
@@ -859,4 +862,322 @@
     }
     
     // Open day modal
+    function openDayModal(day, dayName) {
+        currentDay = day;
+        document.getElementById('modalTitle').textContent = dayName;
+        document.getElementById('dayModal').style.display = 'block';
+        updateModalContent();
+    }
+    
+    // Close day modal
+    function closeDayModal() {
+        document.getElementById('dayModal').style.display = 'none';
+        document.getElementById('itemDesc').value = '';
+        document.getElementById('itemAmount').value = '';
+    }
+    
+    // Update modal content
+    function updateModalContent() {
+        const expenses = dailyExpenses[currentDay];
+        const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+        
+        document.getElementById('modalDayTotal').textContent = `£${total.toFixed(2)}`;
+        
+        const itemsList = document.getElementById('itemsList');
+        if (expenses.length === 0) {
+            itemsList.innerHTML = '<p style="text-align: center; color: #8e8e93; font-style: italic;">No expenses yet. Add your first item above!</p>';
+        } else {
+            itemsList.innerHTML = expenses.map((item, index) => `
+                <div class="expense-item">
+                    <div class="expense-desc">${item.description}</div>
+                    <div class="expense-amount">£${item.amount.toFixed(2)}</div>
+                    <button class="delete-button" onclick="deleteItem(${index})" title="Delete">×</button>
+                </div>
+            `).join('');
+        }
+    }
+    
+    // Add item to current day
+    function addItem() {
+        const description = document.getElementById('itemDesc').value.trim();
+        const amount = parseFloat(document.getElementById('itemAmount').value);
+        
+        if (!description || !amount || amount <= 0) {
+            alert('Please enter both description and amount');
+            return;
+        }
+        
+        dailyExpenses[currentDay].push({
+            description: description,
+            amount: amount,
+            timestamp: new Date().toISOString()
+        });
+        
+        document.getElementById('itemDesc').value = '';
+        document.getElementById('itemAmount').value = '';
+        
+        updateModalContent();
+        updateDay(currentDay);
+        updateWeeklyTotals();
+    }
+    
+    // Delete item from current day
+    function deleteItem(index) {
+        if (confirm('Delete this expense?')) {
+            dailyExpenses[currentDay].splice(index, 1);
+            updateModalContent();
+            updateDay(currentDay);
+            updateWeeklyTotals();
+        }
+    }
+    
+    // Handle enter key in modal
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && document.getElementById('dayModal').style.display === 'block') {
+            if (document.getElementById('itemDesc') === document.activeElement || 
+                document.getElementById('itemAmount') === document.activeElement) {
+                addItem();
+            }
+        }
+    });
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('dayModal');
+        if (event.target === modal) {
+            closeDayModal();
+        }
+    }
+    
+    // Reset for new week
+    function resetWeek() {
+        if (confirm('Are you sure you want to start a new week? Current data will be saved to history.')) {
+            saveCurrentWeekToHistory();
+            
+            dailyExpenses = {
+                mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+            };
+            document.getElementById('notes').value = '';
+            setWeekStart();
+            updateAllDays();
+            alert('New week started! Previous week saved to history.');
+        }
+    }
+    
+    // Save current week to history
+    function saveCurrentWeekToHistory() {
+        try {
+            const totalSpent = days.reduce((sum, day) => 
+                sum + dailyExpenses[day].reduce((daySum, item) => daySum + item.amount, 0), 0);
+            
+            if (totalSpent === 0 && !document.getElementById('notes').value.trim()) {
+                return;
+            }
+            
+            const weekData = {
+                weekStart: document.getElementById('weekStart').textContent,
+                dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)),
+                notes: document.getElementById('notes').value,
+                totalSpent: totalSpent,
+                remaining: WEEKLY_BUDGET - totalSpent,
+                timestamp: new Date().toISOString()
+            };
+            
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
+            
+            if (existingIndex >= 0) {
+                existingData.history[existingIndex] = weekData;
+            } else {
+                existingData.history.unshift(weekData);
+            }
+            
+            if (existingData.history.length > 26) {
+                existingData.history = existingData.history.slice(0, 26);
+            }
+            
+            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+            loadHistory();
+        } catch (error) {
+            console.log('Error saving to history:', error);
+            alert('Data saved locally but history may not persist. App still works normally!');
+        }
+    }
+    
+    // Save current week
+    function saveWeek() {
+        saveCurrentWeekToHistory();
+        alert('Week saved to history! 📊');
+    }
+    
+    // Toggle history visibility
+    function toggleHistory() {
+        const content = document.getElementById('historyContent');
+        const button = document.querySelector('.history-button');
+        
+        if (content.classList.contains('visible')) {
+            content.classList.remove('visible');
+            button.textContent = '📊 View History';
+        } else {
+            content.classList.add('visible');
+            button.textContent = '📊 Hide History';
+            loadHistory();
+        }
+    }
+    
+    // Load and display history
+    function loadHistory() {
+        try {
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            const historyList = document.getElementById('historyList');
+            
+            if (!historyList) {
+                console.log('History list element not found');
+                return;
+            }
+            
+            if (existingData.history.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #8e8e93; font-style: italic;">No history yet. Complete a week to see it here!</p>';
+                return;
+            }
+            
+            historyList.innerHTML = existingData.history.map((week, index) => {
+                const overBudget = week.totalSpent > WEEKLY_BUDGET;
+                const borderColor = overBudget ? '#ff3b30' : '#34c759';
+                
+                // Create daily breakdown
+                const dailyBreakdown = days.map(day => {
+                    const dayExpenses = week.dailyExpenses[day] || [];
+                    const dayTotal = dayExpenses.reduce((sum, item) => sum + item.amount, 0);
+                    if (dayTotal > 0) {
+                        const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+                        const itemsPreview = dayExpenses.slice(0, 3).map(item => 
+                            `${item.description} (£${item.amount.toFixed(2)})`
+                        ).join(', ');
+                        return `${dayName}: £${dayTotal.toFixed(2)} - ${itemsPreview}${dayExpenses.length > 3 ? '...' : ''}`;
+                    }
+                    return null;
+                }).filter(Boolean).join('<br>');
+                
+                return `
+                    <div class="history-item" style="border-left: 4px solid ${borderColor}">
+                        <div class="history-header">
+                            <div class="history-week">Week of ${week.weekStart}</div>
+                            <small class="history-date">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
+                        </div>
+                        <div class="history-stats">
+                            <div class="history-stat">
+                                <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
+                                <div class="history-stat-label">Spent</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
+                                <div class="history-stat-label">Remaining</div>
+                            </div>
+                            <div class="history-stat">
+                                <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
+                                <div class="history-stat-label">Used</div>
+                            </div>
+                        </div>
+                        ${dailyBreakdown ? `<div class="history-details">${dailyBreakdown}</div>` : ''}
+                        ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+        } catch (error) {
+            console.log('Error loading history:', error);
+            const historyList = document.getElementById('historyList');
+            if (historyList) {
+                historyList.innerHTML = '<p style="text-align: center; color: #ff3b30;">Unable to load history. The tracker still works for current week!</p>';
+            }
+        }
+    }
+    
+    // Export to CSV
+    function exportToCSV() {
+        try {
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            
+            if (existingData.history.length === 0) {
+                alert('No history to export!');
+                return;
+            }
+            
+            let csv = 'Week Starting,Total Spent,Remaining,Budget Used %,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
+            
+            existingData.history.forEach(week => {
+                const dailyTotals = days.map(day => {
+                    const dayExpenses = week.dailyExpenses[day] || [];
+                    return dayExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
+                });
+                
+                const budgetUsedPercent = ((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(1);
+                
+                const row = [
+                    week.weekStart,
+                    week.totalSpent.toFixed(2),
+                    week.remaining.toFixed(2),
+                    budgetUsedPercent + '%',
+                    ...dailyTotals,
+                    `"${(week.notes || '').replace(/"/g, '""')}"`
+                ];
+                csv += row.join(',') + '\n';
+            });
+            
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `budget-history-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.log('Error exporting CSV:', error);
+            alert('Error exporting data. Please try again.');
+        }
+    }
+    
+    // Clear history
+    function clearHistory() {
+        if (confirm('Are you sure you want to clear all history? This cannot be undone!')) {
+            try {
+                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{}');
+                existingData.history = [];
+                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+                loadHistory();
+                alert('History cleared!');
+            } catch (error) {
+                console.log('Error clearing history:', error);
+                alert('Error clearing history. Please try again.');
+            }
+        }
+    }
+    
+    // Add event listener for notes
+    document.getElementById('notes').addEventListener('input', saveData);
+    
+    // Initialize
+    function init() {
+        try {
+            setWeekStart();
+            loadData();
+            updateAllDays();
+        } catch (error) {
+            console.log('Initialization error:', error);
+            setWeekStart();
+            updateAllDays();
+        }
+    }
+    
+    // Start the app when page loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+</script>
 ```
+
+</body>
+</html>
