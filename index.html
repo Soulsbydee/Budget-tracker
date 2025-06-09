@@ -1,1011 +1,876 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weekly Budget Tracker</title>
+    <title>Budget</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f7fa;
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f2f2f7;
+        color: #000;
+        line-height: 1.4;
+    }
+    
+    .container {
+        max-width: 428px;
+        margin: 0 auto;
+        min-height: 100vh;
+        background: #f2f2f7;
+    }
+    
+    .header {
+        background: #f2f2f7;
+        padding: 44px 20px 20px;
+        border-bottom: 0.5px solid #c6c6c8;
+    }
+    
+    .title {
+        font-size: 34px;
+        font-weight: 700;
+        color: #000;
+        margin: 0;
+        letter-spacing: -0.41px;
+    }
+    
+    .week-info {
+        font-size: 17px;
+        color: #8e8e93;
+        margin-top: 8px;
+        font-weight: 400;
+    }
+    
+    .budget-section {
+        background: #fff;
+        margin: 20px 16px;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .budget-overview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .budget-card {
+        text-align: center;
+        padding: 16px;
+        background: #f2f2f7;
+        border-radius: 8px;
+    }
+    
+    .budget-amount {
+        font-size: 28px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 4px;
+        letter-spacing: -0.35px;
+    }
+    
+    .budget-label {
+        font-size: 13px;
+        color: #8e8e93;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    
+    .remaining-card {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 20px;
+        background: #f2f2f7;
+        border-radius: 8px;
+    }
+    
+    .remaining-amount {
+        font-size: 32px;
+        font-weight: 600;
+        color: #34c759;
+        margin-bottom: 4px;
+        letter-spacing: -0.4px;
+    }
+    
+    .progress-container {
+        margin: 20px 0;
+    }
+    
+    .progress-track {
+        width: 100%;
+        height: 4px;
+        background: #e5e5ea;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: #34c759;
+        border-radius: 2px;
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .days-section {
+        background: #fff;
+        margin: 0 16px 20px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .day-row {
+        display: flex;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 0.5px solid #c6c6c8;
+        background: #fff;
+        transition: background-color 0.15s ease;
+        cursor: pointer;
+    }
+    
+    .day-row:last-child {
+        border-bottom: none;
+    }
+    
+    .day-row:active {
+        background: #f2f2f7;
+    }
+    
+    .day-info {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .day-name {
+        font-size: 17px;
+        font-weight: 400;
+        color: #000;
+        margin-bottom: 2px;
+    }
+    
+    .day-summary {
+        font-size: 15px;
+        color: #8e8e93;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .day-amount {
+        font-size: 17px;
+        font-weight: 600;
+        color: #007aff;
+        margin-left: 12px;
+    }
+    
+    .chevron {
+        margin-left: 8px;
+        width: 8px;
+        height: 14px;
+        opacity: 0.3;
+    }
+    
+    .notes-section {
+        background: #fff;
+        margin: 0 16px 20px;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .notes-label {
+        font-size: 17px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 12px;
+    }
+    
+    .notes-input {
+        width: 100%;
+        min-height: 80px;
+        border: none;
+        background: #f2f2f7;
+        border-radius: 8px;
+        padding: 12px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        font-size: 16px;
+        color: #000;
+        resize: vertical;
+        box-sizing: border-box;
+    }
+    
+    .notes-input:focus {
+        outline: none;
+        background: #e5e5ea;
+    }
+    
+    .notes-input::placeholder {
+        color: #8e8e93;
+    }
+    
+    .actions-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 0 16px 20px;
+    }
+    
+    .action-button {
+        background: #007aff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 14px 20px;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    
+    .action-button:active {
+        background: #0056cc;
+    }
+    
+    .action-button.secondary {
+        background: #8e8e93;
+    }
+    
+    .action-button.secondary:active {
+        background: #636366;
+    }
+    
+    .history-section {
+        margin: 0 16px 40px;
+    }
+    
+    .history-button {
+        width: 100%;
+        background: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-size: 17px;
+        font-weight: 400;
+        color: #007aff;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    
+    .history-button:active {
+        background: #f2f2f7;
+    }
+    
+    .history-content {
+        display: none;
+        margin-top: 16px;
+    }
+    
+    .history-content.visible {
+        display: block;
+    }
+    
+    .history-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .history-control {
+        background: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 400;
+        color: #007aff;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .history-control:active {
+        background: #f2f2f7;
+    }
+    
+    .history-control.destructive {
+        color: #ff3b30;
+    }
+    
+    .history-item {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+    
+    .history-week {
+        font-size: 17px;
+        font-weight: 600;
+        color: #000;
+    }
+    
+    .history-date {
+        font-size: 13px;
+        color: #8e8e93;
+    }
+    
+    .history-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .history-stat {
+        text-align: center;
+        padding: 12px;
+        background: #f2f2f7;
+        border-radius: 8px;
+    }
+    
+    .history-stat-value {
+        font-size: 20px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 2px;
+    }
+    
+    .history-stat-label {
+        font-size: 11px;
+        color: #8e8e93;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    
+    .history-details {
+        font-size: 15px;
+        color: #8e8e93;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+    
+    .history-notes {
+        background: #f2f2f7;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #000;
+        font-style: italic;
+    }
+    
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.4);
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+    }
+    
+    .modal-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 12px 12px 0 0;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 20px 20px 0;
+        border-bottom: 0.5px solid #c6c6c8;
+        margin-bottom: 20px;
+    }
+    
+    .modal-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #000;
+        text-align: center;
+        margin-bottom: 16px;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 17px;
+        color: #007aff;
+        cursor: pointer;
+        font-weight: 400;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    
+    .modal-body {
+        padding: 0 20px 20px;
+    }
+    
+    .day-total-display {
+        text-align: center;
+        padding: 20px;
+        background: #f2f2f7;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .day-total-amount {
+        font-size: 28px;
+        font-weight: 600;
+        color: #000;
+        margin-bottom: 4px;
+    }
+    
+    .day-total-label {
+        font-size: 13px;
+        color: #8e8e93;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    
+    .add-expense-form {
+        margin-bottom: 20px;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 12px;
+        align-items: end;
+    }
+    
+    .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .input-label {
+        font-size: 13px;
+        color: #8e8e93;
+        margin-bottom: 6px;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+    
+    .input-field {
+        background: #f2f2f7;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-size: 16px;
+        color: #000;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    
+    .input-field:focus {
+        outline: none;
+        background: #e5e5ea;
+    }
+    
+    .input-field::placeholder {
+        color: #8e8e93;
+    }
+    
+    .add-button {
+        background: #007aff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        height: 44px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+    
+    .add-button:active {
+        background: #0056cc;
+    }
+    
+    .expenses-list {
+        margin-bottom: 20px;
+    }
+    
+    .expense-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: #f2f2f7;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .expense-desc {
+        font-size: 16px;
+        color: #000;
+        font-weight: 400;
+    }
+    
+    .expense-amount {
+        font-size: 16px;
+        font-weight: 600;
+        color: #007aff;
+        margin-right: 12px;
+    }
+    
+    .delete-button {
+        background: none;
+        border: none;
+        color: #ff3b30;
+        font-size: 18px;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    @media (max-width: 480px) {
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 16px;
         }
         
-        .container {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .week-info {
-            background: #e8f4fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-        
-        .budget-summary {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        
-        .summary-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid #3498db;
-        }
-        
-        .summary-card.spent {
-            border-left-color: #e74c3c;
-        }
-        
-        .summary-card.remaining {
-            border-left-color: #27ae60;
-            grid-column: 1 / -1;
-        }
-        
-        .summary-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .summary-label {
-            font-size: 12px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            margin-top: 5px;
-        }
-        
-        .daily-tracker {
-            margin-bottom: 25px;
-        }
-        
-        .day-row {
-            display: grid;
-            grid-template-columns: 60px 1fr 80px;
-            gap: 15px;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #ecf0f1;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border-radius: 6px;
-            margin-bottom: 5px;
-        }
-        
-        .day-row:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .day-name {
-            font-weight: bold;
-            color: #34495e;
-        }
-        
-        .day-summary {
-            font-size: 14px;
-            color: #7f8c8d;
-        }
-        
-        .day-total {
-            font-weight: bold;
-            color: #e74c3c;
-            text-align: right;
-            font-size: 18px;
-        }
-        
-        .progress-bar {
+        .add-button {
             width: 100%;
-            height: 20px;
-            background-color: #ecf0f1;
-            border-radius: 10px;
-            margin: 15px 0;
-            overflow: hidden;
         }
         
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
-            transition: width 0.3s ease;
-            border-radius: 10px;
+        .budget-overview {
+            grid-template-columns: 1fr;
         }
         
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+        .actions-section {
+            grid-template-columns: 1fr;
         }
-        
-        .modal-content {
-            background-color: #fefefe;
-            margin: 5% auto;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .modal-header {
-            padding: 20px 25px 15px;
-            border-bottom: 1px solid #ecf0f1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .close {
-            color: #aaa;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        .close:hover {
-            color: #000;
-        }
-        
-        .modal-body {
-            padding: 20px 25px;
-        }
-        
-        .day-total-modal {
-            text-align: center;
-            padding: 15px;
-            background: #e8f4fd;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        
-        .day-total-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .day-total-label {
-            font-size: 12px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-        
-        .add-item-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr auto;
-            gap: 10px;
-            margin-bottom: 20px;
-            align-items: end;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group label {
-            font-size: 12px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-        
-        .form-group input {
-            padding: 10px 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        .btn-add {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            height: 42px;
-        }
-        
-        .btn-add:hover {
-            background-color: #2980b9;
-        }
-        
-        .items-list {
-            margin-bottom: 20px;
-        }
-        
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            margin-bottom: 8px;
-        }
-        
-        .item-desc {
-            flex: 1;
-            font-weight: 500;
-        }
-        
-        .item-amount {
-            font-weight: bold;
-            color: #e74c3c;
-            margin-right: 10px;
-        }
-        
-        .btn-delete {
-            background: none;
-            border: none;
-            color: #e74c3c;
-            cursor: pointer;
-            font-size: 18px;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 25px;
-        }
-        
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn-reset {
-            background-color: #95a5a6;
-            color: white;
-        }
-        
-        .btn-reset:hover {
-            background-color: #7f8c8d;
-        }
-        
-        .btn-save {
-            background-color: #27ae60;
-            color: white;
-        }
-        
-        .btn-save:hover {
-            background-color: #229954;
-        }
-        
-        .weekly-notes {
-            margin-top: 25px;
-        }
-        
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            resize: vertical;
-            min-height: 80px;
-            box-sizing: border-box;
-        }
-        
-        textarea:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-        
-        .history-section {
-            margin-top: 30px;
-            border-top: 2px solid #ecf0f1;
-            padding-top: 25px;
-        }
-        
-        .history-toggle {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        
-        .history-toggle:hover {
-            background: #2980b9;
-        }
-        
-        .history-content {
-            display: none;
-        }
-        
-        .history-content.visible {
-            display: block;
-        }
-        
-        .history-item {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .history-week {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        
-        .history-summary {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .history-stat {
-            text-align: center;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-        }
-        
-        .history-stat-value {
-            font-weight: bold;
-            font-size: 18px;
-            color: #2c3e50;
-        }
-        
-        .history-stat-label {
-            font-size: 11px;
-            color: #7f8c8d;
-            text-transform: uppercase;
-        }
-        
-        .history-details {
-            font-size: 14px;
-            color: #5a6c7d;
-            margin-bottom: 10px;
-        }
-        
-        .history-notes {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 10px;
-            font-style: italic;
-            color: #5a6c7d;
-        }
-        
-        .export-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .btn-export {
-            background-color: #8e44ad;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin: 0 5px;
-        }
-        
-        .btn-export:hover {
-            background-color: #7d3c98;
-        }
-        
-        .btn-clear {
-            background-color: #e74c3c;
-            color: white;
-        }
-        
-        .btn-clear:hover {
-            background-color: #c0392b;
-        }
-        
-        @media (max-width: 480px) {
-            .add-item-form {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .btn-add {
-                justify-self: center;
-                width: 100%;
-            }
-        }
-    </style>
+    }
+</style>
+```
+
 </head>
 <body>
     <div class="container">
-        <h1>Weekly Budget Tracker</h1>
-        
-        <div class="week-info">
-            <strong>Week Starting: <span id="weekStart"></span></strong>
+        <div class="header">
+            <h1 class="title">Budget</h1>
+            <div class="week-info">Week starting <span id="weekStart"></span></div>
         </div>
-        
-        <div class="budget-summary">
-            <div class="summary-card">
-                <div class="summary-value">£308</div>
-                <div class="summary-label">Weekly Budget</div>
+
+```
+    <div class="budget-section">
+        <div class="budget-overview">
+            <div class="budget-card">
+                <div class="budget-amount">£308</div>
+                <div class="budget-label">Weekly Budget</div>
             </div>
-            <div class="summary-card spent">
-                <div class="summary-value" id="totalSpent">£0</div>
-                <div class="summary-label">Spent So Far</div>
-            </div>
-            <div class="summary-card remaining">
-                <div class="summary-value" id="remaining">£308</div>
-                <div class="summary-label">Remaining</div>
+            <div class="budget-card">
+                <div class="budget-amount" id="totalSpent">£0</div>
+                <div class="budget-label">Spent So Far</div>
             </div>
         </div>
         
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        <div class="remaining-card">
+            <div class="remaining-amount" id="remaining">£308</div>
+            <div class="budget-label">Remaining</div>
         </div>
         
-        <div class="daily-tracker">
-            <div class="day-row" onclick="openDayModal('mon', 'Monday')">
-                <div class="day-name">Mon</div>
+        <div class="progress-container">
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="days-section">
+        <div class="day-row" onclick="openDayModal('mon', 'Monday')">
+            <div class="day-info">
+                <div class="day-name">Monday</div>
                 <div class="day-summary" id="mon-summary">Tap to add expenses</div>
-                <div class="day-total" id="mon-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('tue', 'Tuesday')">
-                <div class="day-name">Tue</div>
+            <div class="day-amount" id="mon-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('tue', 'Tuesday')">
+            <div class="day-info">
+                <div class="day-name">Tuesday</div>
                 <div class="day-summary" id="tue-summary">Tap to add expenses</div>
-                <div class="day-total" id="tue-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('wed', 'Wednesday')">
-                <div class="day-name">Wed</div>
+            <div class="day-amount" id="tue-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('wed', 'Wednesday')">
+            <div class="day-info">
+                <div class="day-name">Wednesday</div>
                 <div class="day-summary" id="wed-summary">Tap to add expenses</div>
-                <div class="day-total" id="wed-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('thu', 'Thursday')">
-                <div class="day-name">Thu</div>
+            <div class="day-amount" id="wed-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('thu', 'Thursday')">
+            <div class="day-info">
+                <div class="day-name">Thursday</div>
                 <div class="day-summary" id="thu-summary">Tap to add expenses</div>
-                <div class="day-total" id="thu-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('fri', 'Friday')">
-                <div class="day-name">Fri</div>
+            <div class="day-amount" id="thu-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('fri', 'Friday')">
+            <div class="day-info">
+                <div class="day-name">Friday</div>
                 <div class="day-summary" id="fri-summary">Tap to add expenses</div>
-                <div class="day-total" id="fri-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('sat', 'Saturday')">
-                <div class="day-name">Sat</div>
+            <div class="day-amount" id="fri-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('sat', 'Saturday')">
+            <div class="day-info">
+                <div class="day-name">Saturday</div>
                 <div class="day-summary" id="sat-summary">Tap to add expenses</div>
-                <div class="day-total" id="sat-total">£0.00</div>
             </div>
-            <div class="day-row" onclick="openDayModal('sun', 'Sunday')">
-                <div class="day-name">Sun</div>
+            <div class="day-amount" id="sat-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+        <div class="day-row" onclick="openDayModal('sun', 'Sunday')">
+            <div class="day-info">
+                <div class="day-name">Sunday</div>
                 <div class="day-summary" id="sun-summary">Tap to add expenses</div>
-                <div class="day-total" id="sun-total">£0.00</div>
             </div>
+            <div class="day-amount" id="sun-total">£0.00</div>
+            <svg class="chevron" viewBox="0 0 8 14" fill="currentColor">
+                <path d="M1.5 0L0 1.5L5.5 7L0 12.5L1.5 14L8.5 7L1.5 0Z"/>
+            </svg>
+        </div>
+    </div>
+    
+    <div class="notes-section">
+        <div class="notes-label">Weekly Notes</div>
+        <textarea class="notes-input" id="notes" placeholder="Any observations about your spending this week?"></textarea>
+    </div>
+    
+    <div class="actions-section">
+        <button class="action-button secondary" onclick="resetWeek()">New Week</button>
+        <button class="action-button" onclick="saveWeek()">Save Week</button>
+    </div>
+    
+    <div class="history-section">
+        <button class="history-button" onclick="toggleHistory()">📊 View History</button>
+        
+        <div class="history-content" id="historyContent">
+            <div class="history-controls">
+                <button class="history-control" onclick="exportToCSV()">📁 Export CSV</button>
+                <button class="history-control destructive" onclick="clearHistory()">🗑️ Clear History</button>
+            </div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Expense Modal -->
+<div id="dayModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle">Monday</div>
+            <button class="modal-close" onclick="closeDayModal()">Done</button>
         </div>
         
-        <div class="weekly-notes">
-            <label for="notes"><strong>Weekly Notes:</strong></label>
-            <textarea id="notes" placeholder="Any observations about your spending this week? What worked well? What to improve next week?"></textarea>
-        </div>
-        
-        <div class="actions">
-            <button class="btn-reset" onclick="resetWeek()">New Week</button>
-            <button class="btn-save" onclick="saveWeek()">Save Week</button>
-        </div>
-        
-        <div class="history-section">
-            <button class="history-toggle" onclick="toggleHistory()">📊 View History</button>
+        <div class="modal-body">
+            <div class="day-total-display">
+                <div class="day-total-amount" id="modalDayTotal">£0.00</div>
+                <div class="day-total-label">Total for Day</div>
+            </div>
             
-            <div class="history-content" id="historyContent">
-                <div class="export-section">
-                    <button class="btn-export" onclick="exportToCSV()">📁 Export CSV</button>
-                    <button class="btn-export btn-clear" onclick="clearHistory()">🗑️ Clear History</button>
-                </div>
-                <div id="historyList">
-                    <!-- History items will be inserted here -->
+            <div class="add-expense-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label class="input-label">Description</label>
+                        <input type="text" class="input-field" id="itemDesc" placeholder="Coffee, lunch, petrol...">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Amount</label>
+                        <input type="number" class="input-field" id="itemAmount" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <button class="add-button" onclick="addItem()">Add</button>
                 </div>
             </div>
+            
+            <div class="expenses-list" id="itemsList"></div>
         </div>
     </div>
+</div>
 
-    <!-- Daily Detail Modal -->
-    <div id="dayModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modalTitle">Monday</div>
-                <span class="close" onclick="closeDayModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div class="day-total-modal">
-                    <div class="day-total-value" id="modalDayTotal">£0.00</div>
-                    <div class="day-total-label">Total for Day</div>
-                </div>
-                
-                <div class="add-item-form">
-                    <div class="form-group">
-                        <label for="itemDesc">What did you buy?</label>
-                        <input type="text" id="itemDesc" placeholder="Coffee, lunch, petrol...">
-                    </div>
-                    <div class="form-group">
-                        <label for="itemAmount">Amount</label>
-                        <input type="number" id="itemAmount" placeholder="0.00" step="0.01" min="0">
-                    </div>
-                    <button class="btn-add" onclick="addItem()">Add</button>
-                </div>
-                
-                <div class="items-list" id="itemsList">
-                    <!-- Items will be added here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const WEEKLY_BUDGET = 308;
-        const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-        let currentDay = '';
-        let dailyExpenses = {
-            mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
-        };
-        
-        // Load data from browser storage
-        function loadData() {
-            try {
-                const saved = localStorage.getItem('budgetTrackerData');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    if (data.currentWeek && data.currentWeek.dailyExpenses) {
-                        dailyExpenses = data.currentWeek.dailyExpenses;
-                        document.getElementById('notes').value = data.currentWeek.notes || '';
-                        updateAllDays();
-                    }
+<script>
+    const WEEKLY_BUDGET = 308;
+    const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+    let currentDay = '';
+    let dailyExpenses = {
+        mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+    };
+    
+    // Load data from browser storage
+    function loadData() {
+        try {
+            const saved = localStorage.getItem('budgetTrackerData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if (data.currentWeek && data.currentWeek.dailyExpenses) {
+                    dailyExpenses = data.currentWeek.dailyExpenses;
+                    document.getElementById('notes').value = data.currentWeek.notes || '';
+                    updateAllDays();
                 }
-            } catch (error) {
-                console.log('Error loading data:', error);
             }
+        } catch (error) {
+            console.log('Error loading data:', error);
         }
-        
-        // Save data to browser storage
-        function saveData() {
-            try {
-                const currentWeekData = {
-                    weekStart: document.getElementById('weekStart').textContent,
-                    dailyExpenses: dailyExpenses,
-                    notes: document.getElementById('notes').value,
-                    timestamp: new Date().toISOString()
-                };
-                
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                existingData.currentWeek = currentWeekData;
-                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-            } catch (error) {
-                console.log('Error saving data:', error);
-            }
-        }
-        
-        // Set current week start date
-        function setWeekStart() {
-            const today = new Date();
-            const monday = new Date(today);
-            monday.setDate(today.getDate() - today.getDay() + 1);
-            document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
-        }
-        
-        // Update day summary and total
-        function updateDay(day) {
-            const expenses = dailyExpenses[day];
-            const total = expenses.reduce((sum, item) => sum + item.amount, 0);
-            
-            document.getElementById(`${day}-total`).textContent = `£${total.toFixed(2)}`;
-            
-            const summaryEl = document.getElementById(`${day}-summary`);
-            if (expenses.length === 0) {
-                summaryEl.textContent = 'Tap to add expenses';
-                summaryEl.style.color = '#7f8c8d';
-            } else {
-                const itemCount = expenses.length;
-                const preview = expenses.slice(0, 2).map(item => item.description).join(', ');
-                summaryEl.textContent = itemCount === 1 ? preview : `${preview}${itemCount > 2 ? '...' : ''}`;
-                summaryEl.style.color = '#5a6c7d';
-            }
-        }
-        
-        // Update all days and totals
-        function updateAllDays() {
-            days.forEach(updateDay);
-            updateWeeklyTotals();
-        }
-        
-        // Update weekly totals
-        function updateWeeklyTotals() {
-            let totalSpent = 0;
-            days.forEach(day => {
-                totalSpent += dailyExpenses[day].reduce((sum, item) => sum + item.amount, 0);
-            });
-            
-            const remaining = WEEKLY_BUDGET - totalSpent;
-            const progressPercent = (totalSpent / WEEKLY_BUDGET) * 100;
-            
-            document.getElementById('totalSpent').textContent = `£${totalSpent.toFixed(2)}`;
-            document.getElementById('remaining').textContent = `£${remaining.toFixed(2)}`;
-            document.getElementById('progressFill').style.width = `${Math.min(progressPercent, 100)}%`;
-            
-            // Change remaining color based on amount
-            const remainingCard = document.getElementById('remaining').parentElement;
-            if (remaining < 0) {
-                remainingCard.style.borderLeftColor = '#e74c3c';
-                document.getElementById('remaining').style.color = '#e74c3c';
-            } else if (remaining < 50) {
-                remainingCard.style.borderLeftColor = '#f39c12';
-                document.getElementById('remaining').style.color = '#f39c12';
-            } else {
-                remainingCard.style.borderLeftColor = '#27ae60';
-                document.getElementById('remaining').style.color = '#27ae60';
-            }
-            
-            saveData();
-        }
-        
-        // Open day modal
-        function openDayModal(day, dayName) {
-            currentDay = day;
-            document.getElementById('modalTitle').textContent = dayName;
-            document.getElementById('dayModal').style.display = 'block';
-            updateModalContent();
-        }
-        
-        // Close day modal
-        function closeDayModal() {
-            document.getElementById('dayModal').style.display = 'none';
-            document.getElementById('itemDesc').value = '';
-            document.getElementById('itemAmount').value = '';
-        }
-        
-        // Update modal content
-        function updateModalContent() {
-            const expenses = dailyExpenses[currentDay];
-            const total = expenses.reduce((sum, item) => sum + item.amount, 0);
-            
-            document.getElementById('modalDayTotal').textContent = `£${total.toFixed(2)}`;
-            
-            const itemsList = document.getElementById('itemsList');
-            if (expenses.length === 0) {
-                itemsList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No expenses yet. Add your first item above!</p>';
-            } else {
-                itemsList.innerHTML = expenses.map((item, index) => `
-                    <div class="item-row">
-                        <div class="item-desc">${item.description}</div>
-                        <div class="item-amount">£${item.amount.toFixed(2)}</div>
-                        <button class="btn-delete" onclick="deleteItem(${index})" title="Delete">×</button>
-                    </div>
-                `).join('');
-            }
-        }
-        
-        // Add item to current day
-        function addItem() {
-            const description = document.getElementById('itemDesc').value.trim();
-            const amount = parseFloat(document.getElementById('itemAmount').value);
-            
-            if (!description || !amount || amount <= 0) {
-                alert('Please enter both description and amount');
-                return;
-            }
-            
-            dailyExpenses[currentDay].push({
-                description: description,
-                amount: amount,
+    }
+    
+    // Save data to browser storage
+    function saveData() {
+        try {
+            const currentWeekData = {
+                weekStart: document.getElementById('weekStart').textContent,
+                dailyExpenses: dailyExpenses,
+                notes: document.getElementById('notes').value,
                 timestamp: new Date().toISOString()
-            });
+            };
             
-            document.getElementById('itemDesc').value = '';
-            document.getElementById('itemAmount').value = '';
-            
-            updateModalContent();
-            updateDay(currentDay);
-            updateWeeklyTotals();
+            const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
+            existingData.currentWeek = currentWeekData;
+            localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
+        } catch (error) {
+            console.log('Error saving data:', error);
         }
+    }
+    
+    // Set current week start date
+    function setWeekStart() {
+        const today = new Date();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - today.getDay() + 1);
+        document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
+    }
+    
+    // Update day summary and total
+    function updateDay(day) {
+        const expenses = dailyExpenses[day];
+        const total = expenses.reduce((sum, item) => sum + item.amount, 0);
         
-        // Delete item from current day
-        function deleteItem(index) {
-            if (confirm('Delete this expense?')) {
-                dailyExpenses[currentDay].splice(index, 1);
-                updateModalContent();
-                updateDay(currentDay);
-                updateWeeklyTotals();
-            }
+        document.getElementById(`${day}-total`).textContent = `£${total.toFixed(2)}`;
+        
+        const summaryEl = document.getElementById(`${day}-summary`);
+        if (expenses.length === 0) {
+            summaryEl.textContent = 'Tap to add expenses';
+            summaryEl.style.color = '#8e8e93';
+        } else {
+            const itemCount = expenses.length;
+            const preview = expenses.slice(0, 2).map(item => item.description).join(', ');
+            summaryEl.textContent = itemCount === 1 ? preview : `${preview}${itemCount > 2 ? '...' : ''}`;
+            summaryEl.style.color = '#000';
         }
-        
-        // Handle enter key in modal
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && document.getElementById('dayModal').style.display === 'block') {
-                if (document.getElementById('itemDesc') === document.activeElement || 
-                    document.getElementById('itemAmount') === document.activeElement) {
-                    addItem();
-                }
-            }
+    }
+    
+    // Update all days and totals
+    function updateAllDays() {
+        days.forEach(updateDay);
+        updateWeeklyTotals();
+    }
+    
+    // Update weekly totals
+    function updateWeeklyTotals() {
+        let totalSpent = 0;
+        days.forEach(day => {
+            totalSpent += dailyExpenses[day].reduce((sum, item) => sum + item.amount, 0);
         });
         
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('dayModal');
-            if (event.target === modal) {
-                closeDayModal();
-            }
-        }
+        const remaining = WEEKLY_BUDGET - totalSpent;
+        const progressPercent = (totalSpent / WEEKLY_BUDGET) * 100;
         
-        // Reset for new week
-        function resetWeek() {
-            if (confirm('Are you sure you want to start a new week? Current data will be saved to history.')) {
-                saveCurrentWeekToHistory();
-                
-                dailyExpenses = {
-                    mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
-                };
-                document.getElementById('notes').value = '';
-                setWeekStart();
-                updateAllDays();
-                alert('New week started! Previous week saved to history.');
-            }
-        }
+        document.getElementById('totalSpent').textContent = `£${totalSpent.toFixed(2)}`;
+        document.getElementById('remaining').textContent = `£${remaining.toFixed(2)}`;
+        document.getElementById('progressFill').style.width = `${Math.min(progressPercent, 100)}%`;
         
-        // Save current week to history
-        function saveCurrentWeekToHistory() {
-            try {
-                const totalSpent = days.reduce((sum, day) => 
-                    sum + dailyExpenses[day].reduce((daySum, item) => daySum + item.amount, 0), 0);
-                
-                if (totalSpent === 0 && !document.getElementById('notes').value.trim()) {
-                    return;
-                }
-                
-                const weekData = {
-                    weekStart: document.getElementById('weekStart').textContent,
-                    dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)),
-                    notes: document.getElementById('notes').value,
-                    totalSpent: totalSpent,
-                    remaining: WEEKLY_BUDGET - totalSpent,
-                    timestamp: new Date().toISOString()
-                };
-                
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                const existingIndex = existingData.history.findIndex(item => item.weekStart === weekData.weekStart);
-                
-                if (existingIndex >= 0) {
-                    existingData.history[existingIndex] = weekData;
-                } else {
-                    existingData.history.unshift(weekData);
-                }
-                
-                if (existingData.history.length > 26) {
-                    existingData.history = existingData.history.slice(0, 26);
-                }
-                
-                localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-                loadHistory();
-            } catch (error) {
-                console.log('Error saving to history:', error);
-                alert('Data saved locally but history may not persist. App still works normally!');
-            }
-        }
+        // Update colors based on remaining amount
+        const remainingEl = document.getElementById('remaining');
+        const progressFill = document.getElementById('progressFill');
         
-        // Save current week
-        function saveWeek() {
-            saveCurrentWeekToHistory();
-            alert('Week saved to history! 📊');
-        }
-        
-        // Toggle history visibility
-        function toggleHistory() {
-            const content = document.getElementById('historyContent');
-            const button = document.querySelector('.history-toggle');
-            
-            if (content.classList.contains('visible')) {
-                content.classList.remove('visible');
-                button.textContent = '📊 View History';
-            } else {
-                content.classList.add('visible');
-                button.textContent = '📊 Hide History';
-                loadHistory();
-            }
-        }
-        
-        // Load and display history
-        function loadHistory() {
-            try {
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                const historyList = document.getElementById('historyList');
-                
-                if (!historyList) {
-                    console.log('History list element not found');
-                    return;
-                }
-                
-                if (existingData.history.length === 0) {
-                    historyList.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">No history yet. Complete a week to see it here!</p>';
-                    return;
-                }
-                
-                historyList.innerHTML = existingData.history.map((week, index) => {
-                    const overBudget = week.totalSpent > WEEKLY_BUDGET;
-                    const borderColor = overBudget ? '#e74c3c' : '#27ae60';
-                    
-                    // Create daily breakdown
-                    const dailyBreakdown = days.map(day => {
-                        const dayExpenses = week.dailyExpenses[day] || [];
-                        const dayTotal = dayExpenses.reduce((sum, item) => sum + item.amount, 0);
-                        if (dayTotal > 0) {
-                            const dayName = day.charAt(0).toUpperCase() + day.slice(1);
-                            const itemsPreview = dayExpenses.slice(0, 3).map(item => 
-                                `${item.description} (£${item.amount.toFixed(2)})`
-                            ).join(', ');
-                            return `${dayName}: £${dayTotal.toFixed(2)} - ${itemsPreview}${dayExpenses.length > 3 ? '...' : ''}`;
-                        }
-                        return null;
-                    }).filter(Boolean).join('<br>');
-                    
-                    return `
-                        <div class="history-item" style="border-left-color: ${borderColor}">
-                            <div class="history-header">
-                                <div class="history-week">Week of ${week.weekStart}</div>
-                                <small style="color: #7f8c8d;">${new Date(week.timestamp).toLocaleDateString('en-GB')}</small>
-                            </div>
-                            <div class="history-summary">
-                                <div class="history-stat">
-                                    <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
-                                    <div class="history-stat-label">Spent</div>
-                                </div>
-                                <div class="history-stat">
-                                    <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
-                                    <div class="history-stat-label">Remaining</div>
-                                </div>
-                                <div class="history-stat">
-                                    <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
-                                    <div class="history-stat-label">Used</div>
-                                </div>
-                            </div>
-                            ${dailyBreakdown ? `<div class="history-details">${dailyBreakdown}</div>` : ''}
-                            ${week.notes ? `<div class="history-notes">"${week.notes}"</div>` : ''}
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.log('Error loading history:', error);
-                const historyList = document.getElementById('historyList');
-                if (historyList) {
-                    historyList.innerHTML = '<p style="text-align: center; color: #e74c3c;">Unable to load history. The tracker still works for current week!</p>';
-                }
-            }
-        }
-        
-        // Export to CSV
-        function exportToCSV() {
-            try {
-                const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{"history": []}');
-                
-                if (existingData.history.length === 0) {
-                    alert('No history to export!');
-                    return;
-                }
-                
-                let csv = 'Week Starting,Total Spent,Remaining,Budget Used %,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
-                
-                existingData.history.forEach(week => {
-                    const dailyTotals = days.map(day => {
-                        const dayExpenses = week.dailyExpenses[day] || [];
-                        return dayExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
-                    });
-                    
-                    const budgetUsedPercent = ((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(1);
-                    
-                    const row = [
-                        week.weekStart,
-                        week.totalSpent.toFixed(2),
-                        week.remaining.toFixed(2),
-                        budgetUsedPercent + '%',
-                        ...dailyTotals,
-                        `"${(week.notes || '').replace(/"/g, '""')}"`
-                    ];
-                    csv += row.join(',') + '\n';
-                });
-                
-                // Download CSV
-                const blob = new Blob([csv], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `budget-history-${new Date().toISOString().split('T')[0]}.csv`;
-                a.click();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.log('Error exporting CSV:', error);
-                alert('Error exporting data. Please try again.');
-            }
-        }
-        
-        // Clear history
-        function clearHistory() {
-            if (confirm('Are you sure you want to clear all history? This cannot be undone!')) {
-                try {
-                    const existingData = JSON.parse(localStorage.getItem('budgetTrackerData') || '{}');
-                    existingData.history = [];
-                    localStorage.setItem('budgetTrackerData', JSON.stringify(existingData));
-                    loadHistory();
-                    alert('History cleared!');
-                } catch (error) {
-                    console.log('Error clearing history:', error);
-                    alert('Error clearing history. Please try again.');
-                }
-            }
-        }
-        
-        // Add event listener for notes
-        document.getElementById('notes').addEventListener('input', saveData);
-        
-        // Initialize
-        function init() {
-            try {
-                setWeekStart();
-                loadData();
-                updateAllDays();
-            } catch (error) {
-                console.log('Initialization error:', error);
-                setWeekStart();
-                updateAllDays();
-            }
-        }
-        
-        // Start the app when page loads
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
+        if (remaining < 0) {
+            remainingEl.style.color = '#ff3b30';
+            progressFill.style.background = '#ff3b30';
+        } else if (remaining < 50) {
+            remainingEl.style.color = '#ff9500';
+            progressFill.style.background = '#ff9500';
         } else {
-            init();
+            remainingEl.style.color = '#34c759';
+            progressFill.style.background = '#34c759';
         }
-    </script>
-</body>
-</html>
+        
+        saveData();
+    }
+    
+    // Open day modal
+    function openDayModal(day, dayName) {
+        currentDay = day;
+        document.getElementById('modalTitle').textContent = dayName;
+        document.getElementById('dayModal').style.display = 'block';
+        updateModalContent();
+    }
+    
+    // Close day modal
+    function closeDayModal() {
+        document.getElementById('dayModal').style.display = 'none';
+        document.getElementById('itemDesc').value = '';
+        document.getElementById('itemAmount').value = '';
+    }
+    
+    // Update modal content
+    function updateModalContent() {
+        const expenses = dailyExpenses[currentDay];
+        const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+        
+        document.getElementById('modalDayTotal').textContent
+```
