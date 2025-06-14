@@ -951,33 +951,48 @@
         updateWeeklyTotals();
     }
     
+    // Set current week start date
+    function setWeekStart() {
+        const today = new Date();
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - today.getDay() + 1);
+        document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
+    }
+    
     // Update weekly totals
     function updateWeeklyTotals() {
         let totalSpent = 0;
         days.forEach(day => {
-            totalSpent += dailyExpenses[day].reduce((sum, item) => sum + item.amount, 0);
+            const dayTotal = dailyExpenses[day].reduce((sum, item) => sum + item.amount, 0);
+            totalSpent += dayTotal;
         });
+        
+        console.log('Updating weekly totals - Total spent:', totalSpent, 'Budget:', WEEKLY_BUDGET); // Debug log
         
         const remaining = WEEKLY_BUDGET - totalSpent;
         const progressPercent = (totalSpent / WEEKLY_BUDGET) * 100;
         
-        document.getElementById('totalSpent').textContent = `£${totalSpent.toFixed(2)}`;
-        document.getElementById('remaining').textContent = `£${remaining.toFixed(2)}`;
-        document.getElementById('progressFill').style.width = `${Math.min(progressPercent, 100)}%`;
+        // Force update the DOM elements
+        const totalSpentEl = document.getElementById('totalSpent');
+        const remainingEl = document.getElementById('remaining');
+        const progressFillEl = document.getElementById('progressFill');
+        
+        if (totalSpentEl) totalSpentEl.textContent = `£${totalSpent.toFixed(2)}`;
+        if (remainingEl) remainingEl.textContent = `£${remaining.toFixed(2)}`;
+        if (progressFillEl) progressFillEl.style.width = `${Math.min(progressPercent, 100)}%`;
         
         // Update colors based on remaining amount
-        const remainingEl = document.getElementById('remaining');
-        const progressFill = document.getElementById('progressFill');
-        
-        if (remaining < 0) {
-            remainingEl.style.color = '#ff3b30';
-            progressFill.style.background = '#ff3b30';
-        } else if (remaining < 50) {
-            remainingEl.style.color = '#ff9500';
-            progressFill.style.background = '#ff9500';
-        } else {
-            remainingEl.style.color = '#34c759';
-            progressFill.style.background = '#34c759';
+        if (remainingEl && progressFillEl) {
+            if (remaining < 0) {
+                remainingEl.style.color = '#ff3b30';
+                progressFillEl.style.background = '#ff3b30';
+            } else if (remaining < 50) {
+                remainingEl.style.color = '#ff9500';
+                progressFillEl.style.background = '#ff9500';
+            } else {
+                remainingEl.style.color = '#34c759';
+                progressFillEl.style.background = '#34c759';
+            }
         }
         
         saveData();
@@ -1289,19 +1304,29 @@
             console.log('Initializing app...'); // Debug log
             setWeekStart();
             loadData();
+            
+            // Force multiple updates to ensure data displays
             updateAllDays();
             
-            // Force a manual check after load
             setTimeout(() => {
-                console.log('Current dailyExpenses after init:', dailyExpenses); // Debug log
+                console.log('Final check - dailyExpenses:', dailyExpenses); // Debug log
                 updateAllDays();
-            }, 100);
+                updateWeeklyTotals();
+            }, 200);
             
         } catch (error) {
             console.log('Initialization error:', error);
             setWeekStart();
             updateAllDays();
         }
+    }
+    
+    // Manual refresh function you can call from console
+    function forceRefresh() {
+        console.log('Force refreshing data...');
+        console.log('Current expenses:', dailyExpenses);
+        updateAllDays();
+        updateWeeklyTotals();
     }
     
     // Start the app when page loads
