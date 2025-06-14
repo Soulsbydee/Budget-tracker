@@ -874,18 +874,42 @@
     function loadData() {
         try {
             const saved = localStorage.getItem('budgetTrackerData');
+            console.log('Loading saved data:', saved); // Debug log
+            
             if (saved) {
                 const data = JSON.parse(saved);
+                console.log('Parsed data:', data); // Debug log
+                
                 if (data.currentWeek && data.currentWeek.dailyExpenses) {
                     dailyExpenses = data.currentWeek.dailyExpenses;
+                    console.log('Loaded daily expenses:', dailyExpenses); // Debug log
+                    
                     document.getElementById('notes').value = data.currentWeek.notes || '';
                     
                     // Load custom budget if saved
                     if (data.currentWeek.weeklyBudget) {
                         WEEKLY_BUDGET = data.currentWeek.weeklyBudget;
                         document.getElementById('weeklyBudget').textContent = `£${WEEKLY_BUDGET}`;
+                        console.log('Loaded custom budget:', WEEKLY_BUDGET); // Debug log
                     }
                     
+                    updateAllDays();
+                }
+                
+                // Also check for old data format compatibility
+                if (data.currentWeek && data.currentWeek.expenses) {
+                    console.log('Found old format data, converting...'); // Debug log
+                    // Convert old format to new format
+                    const oldExpenses = data.currentWeek.expenses;
+                    days.forEach(day => {
+                        if (oldExpenses[day] && oldExpenses[day].amount > 0) {
+                            dailyExpenses[day] = [{
+                                description: oldExpenses[day].description || 'Imported expense',
+                                amount: oldExpenses[day].amount,
+                                timestamp: new Date().toISOString()
+                            }];
+                        }
+                    });
                     updateAllDays();
                 }
             }
@@ -1262,9 +1286,17 @@
     // Initialize
     function init() {
         try {
+            console.log('Initializing app...'); // Debug log
             setWeekStart();
             loadData();
             updateAllDays();
+            
+            // Force a manual check after load
+            setTimeout(() => {
+                console.log('Current dailyExpenses after init:', dailyExpenses); // Debug log
+                updateAllDays();
+            }, 100);
+            
         } catch (error) {
             console.log('Initialization error:', error);
             setWeekStart();
