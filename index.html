@@ -27,34 +27,41 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-rendering: optimizeLegibility;
+        overflow-x: hidden;
     }
     
     .container {
         max-width: 428px;
         margin: 0 auto;
-        min-height: 80vh;
+        min-height: 100vh;
         background: #f2f2f7;
+        position: relative;
+        overflow-x: hidden;
     }
     
     .header {
         background: #f2f2f7;
-        padding: 20px 20px 20px;
+        padding: 20px 20px 16px;
         border-bottom: 0.5px solid #c6c6c8;
+        position: relative;
+        overflow: hidden;
     }
     
     .title {
-        font-size: 26px;
+        font-size: 28px;
         font-weight: 700;
         color: #000;
         margin: 0;
-        letter-spacing: -0.41px;
+        letter-spacing: -0.35px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .week-info {
-        font-size: 17px;
+        font-size: 15px;
         color: #8e8e93;
-        margin-top: 8px;
+        margin-top: 4px;
         font-weight: 400;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .budget-section {
@@ -78,6 +85,7 @@
         padding: 10px 8px;
         background: #f2f2f7;
         border-radius: 6px;
+        position: relative;
     }
     
     .budget-amount {
@@ -86,6 +94,39 @@
         color: #000;
         margin-bottom: 2px;
         letter-spacing: -0.2px;
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+    .budget-amount.editable {
+        cursor: pointer;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 2px 4px;
+        transition: all 0.2s ease;
+    }
+    
+    .budget-amount.editable:hover {
+        background: #e5e5ea;
+        border-color: #007aff;
+    }
+    
+    .budget-input {
+        font-size: 18px;
+        font-weight: 600;
+        color: #000;
+        background: #fff;
+        border: 2px solid #007aff;
+        border-radius: 4px;
+        padding: 2px 4px;
+        text-align: center;
+        width: 80px;
+        font-family: 'Inter', sans-serif !important;
+        letter-spacing: -0.2px;
+    }
+    
+    .budget-input:focus {
+        outline: none;
+        border-color: #0056cc;
     }
     
     .budget-label {
@@ -94,6 +135,7 @@
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .remaining-card {
@@ -110,6 +152,7 @@
         color: #34c759;
         margin-bottom: 2px;
         letter-spacing: -0.2px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .progress-container {
@@ -167,6 +210,7 @@
         font-weight: 400;
         color: #000;
         margin-bottom: 2px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .day-summary {
@@ -175,6 +219,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .day-amount {
@@ -182,6 +227,7 @@
         font-weight: 600;
         color: #007aff;
         margin-left: 12px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .chevron {
@@ -204,6 +250,7 @@
         font-weight: 600;
         color: #000;
         margin-bottom: 12px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .notes-input {
@@ -246,7 +293,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: background-color 0.15s ease;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     
     .action-button:active {
@@ -277,7 +324,7 @@
         color: #007aff;
         cursor: pointer;
         transition: background-color 0.15s ease;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     
     .history-button:active {
@@ -310,7 +357,7 @@
         color: #007aff;
         cursor: pointer;
         transition: background-color 0.15s ease;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
     
@@ -341,11 +388,13 @@
         font-size: 17px;
         font-weight: 600;
         color: #000;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .history-date {
         font-size: 13px;
         color: #8e8e93;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .history-stats {
@@ -367,6 +416,7 @@
         font-weight: 600;
         color: #000;
         margin-bottom: 2px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .history-stat-label {
@@ -374,6 +424,7 @@
         color: #8e8e93;
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .history-details {
@@ -381,6 +432,7 @@
         color: #8e8e93;
         line-height: 1.4;
         margin-bottom: 12px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .history-notes {
@@ -390,6 +442,7 @@
         font-size: 15px;
         color: #000;
         font-style: italic;
+        font-family: 'Inter', sans-serif !important;
     }
     
     /* Modal Styles */
@@ -428,6 +481,7 @@
         color: #000;
         text-align: center;
         margin-bottom: 16px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .modal-close {
@@ -440,7 +494,7 @@
         color: #007aff;
         cursor: pointer;
         font-weight: 400;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     
     .modal-body {
@@ -460,6 +514,7 @@
         font-weight: 600;
         color: #000;
         margin-bottom: 4px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .day-total-label {
@@ -467,6 +522,7 @@
         color: #8e8e93;
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .add-expense-form {
@@ -492,6 +548,7 @@
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .input-field {
@@ -523,7 +580,7 @@
         font-weight: 600;
         cursor: pointer;
         height: 44px;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     
     .add-button:active {
@@ -548,6 +605,7 @@
         font-size: 16px;
         color: #000;
         font-weight: 400;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .expense-amount {
@@ -555,6 +613,7 @@
         font-weight: 600;
         color: #007aff;
         margin-right: 12px;
+        font-family: 'Inter', sans-serif !important;
     }
     
     .delete-button {
@@ -581,7 +640,7 @@
         }
         
         .budget-overview {
-            flex-direction: column;
+            flex-direction: row !important;
         }
         
         .actions-section {
@@ -603,7 +662,7 @@
     <div class="budget-section">
         <div class="budget-overview">
             <div class="budget-card">
-                <div class="budget-amount">£308</div>
+                <div class="budget-amount editable" id="weeklyBudget" onclick="editBudget()">£308</div>
                 <div class="budget-label">Weekly Budget</div>
             </div>
             <div class="budget-card">
@@ -754,12 +813,62 @@
 </div>
 
 <script>
-    const WEEKLY_BUDGET = 308;
+    let WEEKLY_BUDGET = 308;
     const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     let currentDay = '';
     let dailyExpenses = {
         mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
     };
+    
+    // Edit budget functionality
+    function editBudget() {
+        const budgetElement = document.getElementById('weeklyBudget');
+        const currentBudget = WEEKLY_BUDGET;
+        
+        // Create input field
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.className = 'budget-input';
+        input.value = currentBudget;
+        input.min = '1';
+        input.step = '1';
+        
+        // Replace the budget display with input
+        budgetElement.style.display = 'none';
+        budgetElement.parentNode.insertBefore(input, budgetElement.nextSibling);
+        
+        // Focus and select
+        input.focus();
+        input.select();
+        
+        // Handle save
+        function saveBudget() {
+            const newBudget = parseInt(input.value);
+            if (newBudget && newBudget > 0) {
+                WEEKLY_BUDGET = newBudget;
+                budgetElement.textContent = `£${newBudget}`;
+                updateWeeklyTotals();
+                saveData();
+            }
+            
+            // Remove input and show budget
+            input.remove();
+            budgetElement.style.display = 'block';
+        }
+        
+        // Save on Enter or blur
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                saveBudget();
+            }
+            if (e.key === 'Escape') {
+                input.remove();
+                budgetElement.style.display = 'block';
+            }
+        });
+        
+        input.addEventListener('blur', saveBudget);
+    }
     
     // Load data from browser storage
     function loadData() {
@@ -770,6 +879,13 @@
                 if (data.currentWeek && data.currentWeek.dailyExpenses) {
                     dailyExpenses = data.currentWeek.dailyExpenses;
                     document.getElementById('notes').value = data.currentWeek.notes || '';
+                    
+                    // Load custom budget if saved
+                    if (data.currentWeek.weeklyBudget) {
+                        WEEKLY_BUDGET = data.currentWeek.weeklyBudget;
+                        document.getElementById('weeklyBudget').textContent = `£${WEEKLY_BUDGET}`;
+                    }
+                    
                     updateAllDays();
                 }
             }
@@ -785,6 +901,7 @@
                 weekStart: document.getElementById('weekStart').textContent,
                 dailyExpenses: dailyExpenses,
                 notes: document.getElementById('notes').value,
+                weeklyBudget: WEEKLY_BUDGET,
                 timestamp: new Date().toISOString()
             };
             
@@ -802,25 +919,6 @@
         const monday = new Date(today);
         monday.setDate(today.getDate() - today.getDay() + 1);
         document.getElementById('weekStart').textContent = monday.toLocaleDateString('en-GB');
-    }
-    
-    // Update day summary and total
-    function updateDay(day) {
-        const expenses = dailyExpenses[day];
-        const total = expenses.reduce((sum, item) => sum + item.amount, 0);
-        
-        document.getElementById(`${day}-total`).textContent = `£${total.toFixed(2)}`;
-        
-        const summaryEl = document.getElementById(`${day}-summary`);
-        if (expenses.length === 0) {
-            summaryEl.textContent = 'Tap to add expenses';
-            summaryEl.style.color = '#8e8e93';
-        } else {
-            const itemCount = expenses.length;
-            const preview = expenses.slice(0, 2).map(item => item.description).join(', ');
-            summaryEl.textContent = itemCount === 1 ? preview : `${preview}${itemCount > 2 ? '...' : ''}`;
-            summaryEl.style.color = '#000';
-        }
     }
     
     // Update all days and totals
@@ -978,6 +1076,7 @@
                 weekStart: document.getElementById('weekStart').textContent,
                 dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)),
                 notes: document.getElementById('notes').value,
+                weeklyBudget: WEEKLY_BUDGET,
                 totalSpent: totalSpent,
                 remaining: WEEKLY_BUDGET - totalSpent,
                 timestamp: new Date().toISOString()
@@ -1042,7 +1141,8 @@
             }
             
             historyList.innerHTML = existingData.history.map((week, index) => {
-                const overBudget = week.totalSpent > WEEKLY_BUDGET;
+                const weeklyBudget = week.weeklyBudget || 308; // fallback for old data
+                const overBudget = week.totalSpent > weeklyBudget;
                 const borderColor = overBudget ? '#ff3b30' : '#34c759';
                 
                 // Create daily breakdown
@@ -1067,15 +1167,15 @@
                         </div>
                         <div class="history-stats">
                             <div class="history-stat">
+                                <div class="history-stat-value">£${weeklyBudget}</div>
+                                <div class="history-stat-label">Budget</div>
+                            </div>
+                            <div class="history-stat">
                                 <div class="history-stat-value">£${week.totalSpent.toFixed(2)}</div>
                                 <div class="history-stat-label">Spent</div>
                             </div>
                             <div class="history-stat">
-                                <div class="history-stat-value">£${week.remaining.toFixed(2)}</div>
-                                <div class="history-stat-label">Remaining</div>
-                            </div>
-                            <div class="history-stat">
-                                <div class="history-stat-value">${((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(0)}%</div>
+                                <div class="history-stat-value">${((week.totalSpent / weeklyBudget) * 100).toFixed(0)}%</div>
                                 <div class="history-stat-label">Used</div>
                             </div>
                         </div>
@@ -1103,20 +1203,22 @@
                 return;
             }
             
-            let csv = 'Week Starting,Total Spent,Remaining,Budget Used %,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
+            let csv = 'Week Starting,Weekly Budget,Total Spent,Remaining,Budget Used %,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,Notes\n';
             
             existingData.history.forEach(week => {
+                const weeklyBudget = week.weeklyBudget || 308;
                 const dailyTotals = days.map(day => {
                     const dayExpenses = week.dailyExpenses[day] || [];
                     return dayExpenses.reduce((sum, item) => sum + item.amount, 0).toFixed(2);
                 });
                 
-                const budgetUsedPercent = ((week.totalSpent / WEEKLY_BUDGET) * 100).toFixed(1);
+                const budgetUsedPercent = ((week.totalSpent / weeklyBudget) * 100).toFixed(1);
                 
                 const row = [
                     week.weekStart,
+                    weeklyBudget.toFixed(2),
                     week.totalSpent.toFixed(2),
-                    week.remaining.toFixed(2),
+                    (weeklyBudget - week.totalSpent).toFixed(2),
                     budgetUsedPercent + '%',
                     ...dailyTotals,
                     `"${(week.notes || '').replace(/"/g, '""')}"`
@@ -1180,4 +1282,25 @@
 ```
 
 </body>
-</html>
+</html> day summary and total
+        function updateDay(day) {
+            const expenses = dailyExpenses[day];
+            const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+
+```
+        document.getElementById(`${day}-total`).textContent = `£${total.toFixed(2)}`;
+        
+        const summaryEl = document.getElementById(`${day}-summary`);
+        if (expenses.length === 0) {
+            summaryEl.textContent = 'Tap to add expenses';
+            summaryEl.style.color = '#8e8e93';
+        } else {
+            const itemCount = expenses.length;
+            const preview = expenses.slice(0, 2).map(item => item.description).join(', ');
+            summaryEl.textContent = itemCount === 1 ? preview : `${preview}${itemCount > 2 ? '...' : ''}`;
+            summaryEl.style.color = '#000';
+        }
+    }
+    
+    // Update
+```
